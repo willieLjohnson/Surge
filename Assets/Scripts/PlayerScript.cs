@@ -76,14 +76,12 @@ public class PlayerScript : MonoBehaviour
 
     private void ShowDetails()
     {
-        levelDetailsText.text = "Level:\n" + (currentLevel - 2) + "\n" + "Song:\n" + "Doo bee - Hoopdy Doo\n" + "High Score:\n" + currentLevelHighScore;
+        levelDetailsText.text = "Level:\n" + (currentLevel - 2) + "\n" + "Song:\n" + world.songName + "\n" + "High Score:\n" + currentLevelHighScore;
         detailsLoadedTime = Time.time;
     }
 
     void Update()
     {
-        print(detailsLoadedTime);
-
         if (timeToDisplayDetails > 0 && levelDetailsCanvas.activeInHierarchy == true) {
             levelDetailsCanvas.GetComponent<CanvasGroup>().alpha -= .001f;
             timeToDisplayDetails -= Time.deltaTime;

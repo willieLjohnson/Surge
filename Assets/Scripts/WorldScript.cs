@@ -49,6 +49,9 @@ public class WorldScript : MonoBehaviour
     private float[] freqBands = new float[8];
     private float[] bandBuffer = new float[8];
     private float[] bufferDecrease = new float[8];
+
+    public string songName;
+
     public void Update()
     {
         if (SceneManager.GetActiveScene().buildIndex > 2)

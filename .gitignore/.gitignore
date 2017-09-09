@@ -37,3 +37,6 @@ sysinfo.txt
 *.mp3
 *.aiff
 *.keystore
+
+# General
+.DS_Store

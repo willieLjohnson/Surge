@@ -70,7 +70,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hitsToKill: 2
-  points: 10
+  points: 20
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1

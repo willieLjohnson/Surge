@@ -235,23 +235,23 @@ public class BallScript : MonoBehaviour
             //     }
             // }
 
-            if (Math.Abs(velocity.y) < 5f && collision.gameObject.CompareTag("Border"))
+            if (Math.Abs(velocity.y) < 20f && collision.gameObject.CompareTag("Border"))
             {
-                Vector2 force = new Vector2(0, boostDirY * 150f);
+                Vector2 force = new Vector2(0, boostDirY * 37);
                 GetComponent<Rigidbody2D>().AddForce(force);
             }
 
             // Make sure that the ball does not get into a horizontal trap
-            if (Math.Abs(velocity.y) < 13f && collision.gameObject == playerObject)
+            if (Math.Abs(velocity.y) < 52f && collision.gameObject == playerObject)
             {
-                Vector2 force = new Vector2(0, boostDirY * 50f);
+                Vector2 force = new Vector2(0, boostDirY * 12);
                 GetComponent<Rigidbody2D>().AddForce(force);
             }
 
             // Make sure that the ball does not get into a vertical trap
-            if (Math.Abs(velocity.x) < 5f && collision.gameObject.CompareTag("Player"))
+            if (Math.Abs(velocity.x) < 20f && collision.gameObject.CompareTag("Player"))
             {
-                Vector2 force = new Vector2(boostDirX * 150f, 0);
+                Vector2 force = new Vector2(boostDirX * 37, 0);
                 GetComponent<Rigidbody2D>().AddForce(force);
             }
 

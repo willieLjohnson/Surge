@@ -5,10 +5,9 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public class WorldScript : MonoBehaviour
+public class LevelManager : MonoBehaviour
 {
     public Camera cam;
-
     public Color playerColor;
     private Color playerOpColor;
 

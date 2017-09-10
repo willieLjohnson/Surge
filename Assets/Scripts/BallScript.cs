@@ -26,7 +26,7 @@ public class BallScript : MonoBehaviour
     private Transform threeBlocks;
     private Transform fourBlocks;
 
-    private WorldScript world;
+    private LevelManager world;
 
     // Animations
     private Animator ballAnim;
@@ -70,7 +70,7 @@ public class BallScript : MonoBehaviour
         cam = GameObject.Find("Main Camera");
         burstPrefab = GameObject.Find("Burst");
 
-        world = GameObject.Find("LevelManager").GetComponent<WorldScript>();
+        world = GameObject.Find("LevelManager").GetComponent<LevelManager>();
 
         ballSprite = GameObject.Find("BallSprite");
         ballSparks = GameObject.Find("Static");

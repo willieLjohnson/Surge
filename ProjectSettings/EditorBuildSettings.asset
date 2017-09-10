@@ -10,10 +10,13 @@ EditorBuildSettings:
     guid: 072760d9bd698ad488ccf66e5426395b
   - enabled: 1
     path: Assets/Levels/HighScore.unity
-    guid: 00000000000000000000000000000000
+    guid: 1b6f742643efd48c18306fc890403950
   - enabled: 1
     path: Assets/Levels/LevelSelect.unity
     guid: ccbcb00c8807042a690a867453708bbe
+  - enabled: 1
+    path: Assets/Levels/Credits.unity
+    guid: 3e1df6b16ad51443c9ca0ea19740f9e5
   - enabled: 1
     path: Assets/Levels/Level1.unity
     guid: 99b8abb0a9cfb4deea4a12b3be477353

@@ -7,13 +7,14 @@ using UnityEngine.SceneManagement;
 public class ButtonManager : MonoBehaviour
 {
     private bool start;
-    private WorldScript levelManager;
+    private LevelManager levelManager;
     public GameObject pauseMenu;
 
     private GameObject player;
+    
     void Start()
     {
-        if (SceneManager.GetActiveScene().buildIndex > 2)
+        if (SceneManager.GetActiveScene().buildIndex > 3)
         {
             pauseMenu.SetActive(false);
             player = GameObject.Find("Player");
@@ -73,6 +74,10 @@ public class ButtonManager : MonoBehaviour
     {
         SceneManager.LoadScene(2);
         Time.timeScale = 1;
+    }
+
+    public void GoToNCSPlaylist() {
+        Application.OpenURL("https://www.youtube.com/playlist?list=PLGXgNrVCYDVZaXQlykaYEa_SMCcuKOCW0");
     }
 
 }

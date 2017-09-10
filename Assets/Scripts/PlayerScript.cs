@@ -22,7 +22,7 @@ public class PlayerScript : MonoBehaviour
     private float maintainedDist;
     private float lastBreakTime;
 
-    public WorldScript world;
+    public LevelManager world;
     private int currentLevel;
 
     private GameObject hud;

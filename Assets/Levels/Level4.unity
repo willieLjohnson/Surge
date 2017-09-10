@@ -1115,6 +1115,11 @@ Prefab:
       propertyPath: world
       value: 
       objectReference: {fileID: 43966547}
+    - target: {fileID: 114055663480359330, guid: 066a8587e60ccfb4fbd1d092b3ce0183,
+        type: 2}
+      propertyPath: levelManager
+      value: 
+      objectReference: {fileID: 43966547}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 066a8587e60ccfb4fbd1d092b3ce0183, type: 2}
   m_IsPrefabParent: 0

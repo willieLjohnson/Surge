@@ -22,7 +22,17 @@ public class ButtonManager : MonoBehaviour
     }
     public void PlayButton()
     {
+        if (SplashScreen.isFinished) SceneManager.LoadScene(1);
+    }
+
+    public void HighScoresButton()
+    {
         if (SplashScreen.isFinished) SceneManager.LoadScene(2);
+    }
+
+    public void CreditsButton()
+    {
+        if (SplashScreen.isFinished) SceneManager.LoadScene(3);
     }
 
     public void ExitButton()
@@ -55,13 +65,13 @@ public class ButtonManager : MonoBehaviour
 
     public void DelayedLoadLevel(int level)
     {
-        GameObject.Find("Level" + (level - 2)).GetComponent<Animator>().SetTrigger("Expand");
+        GameObject.Find("Level" + level).GetComponent<Animator>().SetTrigger("Expand");
         StartCoroutine(Load(level, .2f));
     }
     IEnumerator Load(int level, float delayTime)
     {
         yield return new WaitForSeconds(delayTime);
-        LoadLevel(level);
+        LoadLevel(level + (LevelManager.numberOfMenuScenes - 1));
 
     }
 
@@ -72,7 +82,7 @@ public class ButtonManager : MonoBehaviour
 
     public void ReturnToLevelSelect()
     {
-        SceneManager.LoadScene(2);
+        SceneManager.LoadScene(1);
         Time.timeScale = 1;
     }
 

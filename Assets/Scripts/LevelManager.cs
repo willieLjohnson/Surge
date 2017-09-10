@@ -48,12 +48,12 @@ public class LevelManager : MonoBehaviour
     private float[] freqBands = new float[8];
     private float[] bandBuffer = new float[8];
     private float[] bufferDecrease = new float[8];
-
     public string songName;
+    public static int numberOfMenuScenes =  4;
 
     public void Update()
     {
-        if (SceneManager.GetActiveScene().buildIndex > 2)
+        if (SceneManager.GetActiveScene().buildIndex > numberOfMenuScenes - 1)
         {
             GetComponent<AudioSource>().GetSpectrumData(samples, 0, FFTWindow.Hamming);
             MakeFreqBands();
@@ -190,7 +190,7 @@ public class LevelManager : MonoBehaviour
             if (hudElement.GetComponent<Text>() != null)
             {
                 hudElement.GetComponent<Text>().color = playerColor;
-                if (hudElement.name == "CurrentLevel") hudElement.GetComponent<Text>().text = "" + (SceneManager.GetActiveScene().buildIndex - 2);
+                if (hudElement.name == "CurrentLevel") hudElement.GetComponent<Text>().text = "" + (SceneManager.GetActiveScene().buildIndex - numberOfMenuScenes + 1);
             }
             else if (hudElement.GetComponent<Image>() != null)
             {

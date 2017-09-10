@@ -22,7 +22,7 @@ public class PlayerScript : MonoBehaviour
     private float maintainedDist;
     private float lastBreakTime;
 
-    public LevelManager world;
+    public LevelManager levelManager;
     private int currentLevel;
 
     private GameObject hud;
@@ -47,16 +47,16 @@ public class PlayerScript : MonoBehaviour
     // Use this for initialization
     void Start()
     {
+        currentLevel = SceneManager.GetActiveScene().buildIndex;
+
         // get the initial position of the game object
         playerPosition = gameObject.transform.position;
 
         playerPoints = 0;
         highestScore = PlayerPrefs.GetInt("HighestScore", 0);
-        currentLevelHighScore = PlayerPrefs.GetInt("HighScoreLevel" + currentLevel, 0);
+        currentLevelHighScore = PlayerPrefs.GetInt("HighScoreLevel" + (currentLevel - LevelManager.numberOfMenuScenes + 1), 0);
 
-        world.ChangeColor();
-
-        currentLevel = SceneManager.GetActiveScene().buildIndex;
+        levelManager.ChangeColor();
 
         hud = GameObject.Find("UI");
 
@@ -76,7 +76,7 @@ public class PlayerScript : MonoBehaviour
 
     private void ShowDetails()
     {
-        levelDetailsText.text = "Level:\n" + (currentLevel - 2) + "\n" + "Song:\n" + world.songName + "\n" + "High Score:\n" + currentLevelHighScore;
+        levelDetailsText.text = "Level:\n" + (currentLevel -  LevelManager.numberOfMenuScenes + 1) + "\n" + "Song:\n" + levelManager.songName + "\n" + "High Score:\n" + currentLevelHighScore;
         detailsLoadedTime = Time.time;
     }
 
@@ -128,7 +128,7 @@ public class PlayerScript : MonoBehaviour
         // Switch level with 2 finger gesture
         if ((Input.touchCount == 3 && Input.GetTouch(0).phase == TouchPhase.Began) || Input.GetKeyDown("n"))
         {
-            if (currentLevel == SceneManager.sceneCountInBuildSettings - 1) SceneManager.LoadScene(3);
+            if (currentLevel == SceneManager.sceneCountInBuildSettings - 1) SceneManager.LoadScene(LevelManager.numberOfMenuScenes);
             else SceneManager.LoadScene(currentLevel + 1);
         }
 
@@ -230,7 +230,7 @@ public class PlayerScript : MonoBehaviour
             }
 
             if (playerPoints > currentLevelHighScore) {
-                PlayerPrefs.SetInt("HighScoreLevel" + currentLevel, playerPoints);
+                PlayerPrefs.SetInt("HighScoreLevel" + (currentLevel - LevelManager.numberOfMenuScenes + 1), playerPoints);
             }
         }
 

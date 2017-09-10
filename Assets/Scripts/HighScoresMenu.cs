@@ -13,14 +13,13 @@ public class HighScoresMenu : MonoBehaviour {
 	Text highScores;
 	// Use this for initialization
 	void Start () {
-		numberOfLevels = SceneManager.sceneCountInBuildSettings - 3;
+		numberOfLevels = SceneManager.sceneCountInBuildSettings - LevelManager.numberOfMenuScenes - 1;
 		highestScoreText = GameObject.Find("HighestScoreNum").GetComponent<Text>();
 		highScores = GameObject.Find("Scores").GetComponent<Text>(); 
 		updateHighestScore();
 		updateLevelScores();
 	}
 	
-	// Update is called once per frame
 	void Update () {
 		
 	}
@@ -35,9 +34,9 @@ public class HighScoresMenu : MonoBehaviour {
 		highScores.text = "";
 		print("Update Level Scores");
 		print("Number of levels: " + numberOfLevels);
-		for(var i = 1 ; i <= numberOfLevels; i++) {
+		for(var i = 1 ; i <= numberOfLevels + 1; i++) {
 			var level = "Level " + i;
-			highScores.text += level + ": " + PlayerPrefs.GetInt("HighScoreLevel" + (i + 2)).ToString() + "\n";
+			highScores.text += level + ": " + PlayerPrefs.GetInt("HighScoreLevel" + i).ToString() + "\n";
 		}
 	}
 }

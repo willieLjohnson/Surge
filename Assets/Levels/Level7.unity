@@ -2208,6 +2208,11 @@ Prefab:
       propertyPath: pointSound
       value: 
       objectReference: {fileID: 8300000, guid: 856d7feabad5a9b4ea1d4737015a46e2, type: 3}
+    - target: {fileID: 114055663480359330, guid: 066a8587e60ccfb4fbd1d092b3ce0183,
+        type: 2}
+      propertyPath: levelManager
+      value: 
+      objectReference: {fileID: 1247504503}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 066a8587e60ccfb4fbd1d092b3ce0183, type: 2}
   m_IsPrefabParent: 0

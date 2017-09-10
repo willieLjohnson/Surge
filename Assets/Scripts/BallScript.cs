@@ -205,7 +205,8 @@ public class BallScript : MonoBehaviour
             Vector2 velocity = GetComponent<Rigidbody2D>().velocity;
 
             if (Time.time - lastHitTime > .01f) GetComponent<AudioSource>().PlayOneShot(hitSound);
-            if (Time.time - lastHitTime < .32f)
+
+            if (Time.time - lastHitTime < .5f)
             {
                 GetComponent<AudioSource>().pitch += .1f;
 
@@ -239,6 +240,7 @@ public class BallScript : MonoBehaviour
             {
                 Vector2 force = new Vector2(0, boostDirY * 37);
                 GetComponent<Rigidbody2D>().AddForce(force);
+                playerObject.SendMessage("Boost", 0.1f);
             }
 
             // Make sure that the ball does not get into a horizontal trap
@@ -246,6 +248,7 @@ public class BallScript : MonoBehaviour
             {
                 Vector2 force = new Vector2(0, boostDirY * 12);
                 GetComponent<Rigidbody2D>().AddForce(force);
+                playerObject.SendMessage("Boost", 0.1f);
             }
 
             // Make sure that the ball does not get into a vertical trap
@@ -253,6 +256,7 @@ public class BallScript : MonoBehaviour
             {
                 Vector2 force = new Vector2(boostDirX * 37, 0);
                 GetComponent<Rigidbody2D>().AddForce(force);
+                playerObject.SendMessage("Boost", 0.1f);
             }
 
             if (collision.gameObject.CompareTag("Player")) playerAnim.Play("PeddleCollision", -1, 0);
@@ -276,6 +280,7 @@ public class BallScript : MonoBehaviour
                         break;
                     case "One":
                         flare = 2f;
+                        playerObject.SendMessage("Boost", 1f);
                         break;
                 }
 

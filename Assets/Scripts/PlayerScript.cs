@@ -43,8 +43,10 @@ public class PlayerScript : MonoBehaviour
     private int scoreRotationSide = 1;
     private float lastPoint;
     private float scoreMultiplier = 1;
+    private Text scoreMultiplierText;
     private int savedDisplayedScore;
     private float pointAnimTimer;
+    private float boostScore;
 
     // Use this for initialization
     void Start()
@@ -70,6 +72,8 @@ public class PlayerScript : MonoBehaviour
         playerLives = GameObject.Find("Lives");
         hudScore = hud.transform.Find("Score").GetComponent<Text>();
 
+        scoreMultiplierText = hud.transform.Find("Multiplier").GetComponent<Text>();
+
         hudScoreScale = hudScore.transform.localScale;
         hudScoreOriginialRot = hudScore.transform.rotation;
 
@@ -78,16 +82,19 @@ public class PlayerScript : MonoBehaviour
 
     private void ShowDetails()
     {
-        levelDetailsText.text = "Level:\n" + (currentLevel -  LevelManager.numberOfMenuScenes + 1) + "\n" + "Song:\n" + levelManager.songName + "\n" + "High Score:\n" + currentLevelHighScore;
+        levelDetailsText.text = "Level:\n" + (currentLevel - LevelManager.numberOfMenuScenes + 1) + "\n" + "Song:\n" + levelManager.songName + "\n" + "High Score:\n" + currentLevelHighScore;
         detailsLoadedTime = Time.time;
     }
 
     void Update()
     {
-        if (timeToDisplayDetails > 0 && levelDetailsCanvas.activeInHierarchy == true) {
+        if (timeToDisplayDetails > 0 && levelDetailsCanvas.activeInHierarchy == true)
+        {
             levelDetailsCanvas.GetComponent<CanvasGroup>().alpha -= .001f;
             timeToDisplayDetails -= Time.deltaTime;
-        } else {
+        }
+        else
+        {
             levelDetailsCanvas.SetActive(false);
         }
 
@@ -104,7 +111,8 @@ public class PlayerScript : MonoBehaviour
         // Move player based on first touch position
         if (Input.touchCount == 1)
         {
-            if (levelDetailsCanvas.activeInHierarchy == true) {
+            if (levelDetailsCanvas.activeInHierarchy == true)
+            {
                 levelDetailsCanvas.SetActive(false);
                 timeToDisplayDetails = 2;
 
@@ -156,7 +164,7 @@ public class PlayerScript : MonoBehaviour
         // Wobble playerscore
         if (currentWobbleTimer > 0 && Time.timeScale > 0)
         {
-            var wobblePos = UnityEngine.Random.insideUnitCircle * (wobbleAmount * scoreMultiplier);
+            var wobblePos = UnityEngine.Random.insideUnitCircle * (wobbleAmount * Mathf.Clamp(scoreMultiplier/2, 1, 2f));
 
             hudScore.transform.localScale = new Vector3(hudScoreScale.x + Math.Abs(wobblePos.x), hudScoreScale.y + Math.Abs(wobblePos.x), hudScoreScale.z);
 
@@ -170,10 +178,17 @@ public class PlayerScript : MonoBehaviour
             isScoreWobbling = false;
         }
 
+        if (Time.time - lastPoint > 1f)
+        {
+            scoreMultiplier = 1f;
+        }
+
         // update hud
         pointAnimTimer += Time.deltaTime;
         float prcComplete = pointAnimTimer / (wobbleTimer * 2.1f);
         hudScore.text = Math.Ceiling(Mathf.Lerp(savedDisplayedScore, playerPoints, prcComplete)).ToString();
+
+        scoreMultiplierText.text = "x" + (scoreMultiplier + boostScore).ToString();
 
         // Check game state
         WinLose();
@@ -182,26 +197,28 @@ public class PlayerScript : MonoBehaviour
     void AddPoints(int points)
     {
         savedDisplayedScore = Int32.Parse(hudScore.text);
-        playerPoints += (int) (points * scoreMultiplier);
+        playerPoints += (int)(points * (scoreMultiplier + boostScore));
         pointAnimTimer = 0f;
 
         scoreRotationSide *= -1;
         // hudScore.transform.Rotate(Vector3.forward, 45 * scoreRotationSide);
 
-        if (Time.time - lastPoint < 0.5f) {
-            scoreMultiplier += 0.05f;
-        } else {
+        if (Time.time - lastPoint < 1f)
+        {
+            scoreMultiplier += 0.5f;
+        }
+        else
+        {
             scoreMultiplier = 1f;
         }
 
-        
-        // B
-        // the player instantly has these points so nothng gets 
-        // messed up if e.g. level ends before score animation finishes
-    
-        // Lerp gets a new end point
         lastPoint = Time.time;
         WobbleScore();
+    }
+
+    void Boost(int amount)
+    {
+        boostScore += amount;
     }
 
     void IncrementBlocksDestroyed()
@@ -228,6 +245,11 @@ public class PlayerScript : MonoBehaviour
         Destroy(playerLives.transform.GetChild(playerLives.transform.childCount - 1).gameObject, .1f);
         GetComponent<AudioSource>().pitch = 1f;
         GetComponent<AudioSource>().PlayOneShot(lifeSound);
+
+        boostScore = 0;
+        scoreMultiplier = 1;
+
+        scoreMultiplierText.text = "x" + (scoreMultiplier + boostScore).ToString();
     }
 
     void WinLose()
@@ -237,11 +259,13 @@ public class PlayerScript : MonoBehaviour
         {
             ResetLevel();
 
-            if (playerPoints > highestScore) {
+            if (playerPoints > highestScore)
+            {
                 PlayerPrefs.SetInt("HighestScore", playerPoints);
             }
 
-            if (playerPoints > currentLevelHighScore) {
+            if (playerPoints > currentLevelHighScore)
+            {
                 PlayerPrefs.SetInt("HighScoreLevel" + (currentLevel - LevelManager.numberOfMenuScenes + 1), playerPoints);
             }
         }

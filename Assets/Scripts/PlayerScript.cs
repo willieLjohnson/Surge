@@ -43,6 +43,8 @@ public class PlayerScript : MonoBehaviour
     private int scoreRotationSide = 1;
     private float lastPoint;
     private float scoreMultiplier = 1;
+    private int savedDisplayedScore;
+    private float pointAnimTimer;
 
     // Use this for initialization
     void Start()
@@ -169,7 +171,9 @@ public class PlayerScript : MonoBehaviour
         }
 
         // update hud
-        hudScore.text = "" + playerPoints;
+        pointAnimTimer += Time.deltaTime;
+        float prcComplete = pointAnimTimer / (wobbleTimer * 2.1f);
+        hudScore.text = Math.Ceiling(Mathf.Lerp(savedDisplayedScore, playerPoints, prcComplete)).ToString();
 
         // Check game state
         WinLose();
@@ -177,7 +181,9 @@ public class PlayerScript : MonoBehaviour
 
     void AddPoints(int points)
     {
+        savedDisplayedScore = Int32.Parse(hudScore.text);
         playerPoints += (int) (points * scoreMultiplier);
+        pointAnimTimer = 0f;
 
         scoreRotationSide *= -1;
         // hudScore.transform.Rotate(Vector3.forward, 45 * scoreRotationSide);
@@ -188,6 +194,12 @@ public class PlayerScript : MonoBehaviour
             scoreMultiplier = 1f;
         }
 
+        
+        // B
+        // the player instantly has these points so nothng gets 
+        // messed up if e.g. level ends before score animation finishes
+    
+        // Lerp gets a new end point
         lastPoint = Time.time;
         WobbleScore();
     }

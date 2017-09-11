@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 public class PlayerScript : MonoBehaviour
 {
-    // Magic numbers
+    // Magic variables
     private float boundary = 4.7f;
     private float playerVelocity = 0.3f;
 
@@ -32,6 +32,7 @@ public class PlayerScript : MonoBehaviour
     private int playerScore;
     private int highScore;
     private int currentLevel;
+    private bool playerReady = false;
 
     private float maintainedDist;
 
@@ -55,6 +56,7 @@ public class PlayerScript : MonoBehaviour
     private int savedDisplayedScore;
     private float scoreLerpTimer;
     private float scoreBoostFactor;
+
     void Awake()
     {
         // UI
@@ -80,6 +82,7 @@ public class PlayerScript : MonoBehaviour
 
         playerScore = 0;
         playerPosition = gameObject.transform.position;
+        playerReady = false;
 
         highScore = PlayerPrefs.GetInt("HighScoreLevel" + (currentLevel - LevelManager.numberOfMenuScenes + 1), 0);
 
@@ -115,19 +118,20 @@ public class PlayerScript : MonoBehaviour
             maintainedDist = touchOrgPos.x - playerPosition.x;
         }
 
-        // Move player based on first touch position
-        if (Input.touchCount == 1)
+        // // Move player based on first touch position
+        if (Input.touchCount == 1 && Input.GetTouch(0).phase == TouchPhase.Moved && !levelInfoCanvas.activeInHierarchy)
         {
-            if (levelInfoCanvas.activeInHierarchy == true)
-            {
-                levelInfoCanvas.SetActive(false);
-                levelInfoDisplayDuration = 2;
-
-                GameObject.Find("Ball").SendMessage("PlayerReady");
-            }
-
             Vector3 touchPos = Camera.main.ScreenToWorldPoint(new Vector3(Input.GetTouch(0).position.x, Input.GetTouch(0).position.y, 5));
             playerPosition = new Vector3(touchPos.x - maintainedDist, playerPosition.y, playerPosition.z);
+
+
+            playerReady = true;
+        }
+        
+        if (Input.touchCount == 1 && Input.GetTouch(0).phase == TouchPhase.Began && levelInfoCanvas.activeInHierarchy)
+        {
+            levelInfoCanvas.SetActive(false);
+            levelInfoDisplayDuration = 2;
         }
 
         if (debug)
@@ -256,7 +260,7 @@ public class PlayerScript : MonoBehaviour
             lastBreakTime = Time.time;
         }
     }
-    
+
     void TakeLife()
     {
         Destroy(playerLives.transform.GetChild(playerLives.transform.childCount - 1).gameObject, .1f);
@@ -306,5 +310,10 @@ public class PlayerScript : MonoBehaviour
     {
         Time.timeScale = 1;
         SceneManager.LoadScene(currentLevel);
+    }
+
+    public bool IsPlayerReady()
+    {
+        return playerReady;
     }
 }

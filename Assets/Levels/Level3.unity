@@ -694,7 +694,7 @@ Prefab:
     - target: {fileID: 224109664202065286, guid: 566200b5ee3b70346ae2df0e8da5c79f,
         type: 2}
       propertyPath: m_RootOrder
-      value: 4
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 224109664202065286, guid: 566200b5ee3b70346ae2df0e8da5c79f,
         type: 2}
@@ -958,7 +958,7 @@ Transform:
   - {fileID: 1285161183}
   - {fileID: 1301362594}
   m_Father: {fileID: 0}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &949087734
 GameObject:
@@ -1873,7 +1873,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!169 &1374712340
 AudioLowPassFilter:
@@ -2183,7 +2183,7 @@ Transform:
   - {fileID: 716789164}
   - {fileID: 949087735}
   m_Father: {fileID: 0}
-  m_RootOrder: 1
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1854344964
 Prefab:
@@ -2479,7 +2479,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4517104202275134, guid: 3fe6ca3bb16087f4e8254a5ef15ab66f, type: 2}
       propertyPath: m_RootOrder
-      value: 3
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 198578372646741050, guid: 3fe6ca3bb16087f4e8254a5ef15ab66f,
         type: 2}

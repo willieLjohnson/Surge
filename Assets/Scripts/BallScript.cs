@@ -44,21 +44,7 @@ public class BallScript : MonoBehaviour
     private bool bgMusicIsStarted;
     private bool playerReady;
 
-    // Use this for initialization
-    void Start()
-    {
-        // create the force
-        ballInitialForce = new Vector2(100.0f, 450.0f);
-
-        // set to inactive
-        ballIsActive = false;
-        isWobbling = false;
-
-        // ball's original info
-        ballPosition = transform.position;
-        ballScale = transform.localScale;
-        ballRotation = transform.rotation;
-
+    void Awake() {
         // get block parents
         oneBlocks = GameObject.Find("One").transform;
         twoBlocks = GameObject.Find("Two").transform;
@@ -79,6 +65,20 @@ public class BallScript : MonoBehaviour
         // anim
         ballAnim = GetComponent<Animator>();
         playerAnim = playerObject.GetComponent<Animator>();
+    }
+    void Start()
+    {
+        // create the force
+        ballInitialForce = new Vector2(100.0f, 450.0f);
+
+        // set to inactive
+        ballIsActive = false;
+        isWobbling = false;
+
+        // ball's original info
+        ballPosition = transform.position;
+        ballScale = transform.localScale;
+        ballRotation = transform.rotation;
 
         setVisualEffectsEnabled(false);
     }

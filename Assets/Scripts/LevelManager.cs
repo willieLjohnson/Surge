@@ -42,7 +42,7 @@ public class LevelManager : MonoBehaviour
     private float intensity = 6f;
     private float freq;
     private bool muffled;
-    private float maxFreq = 22000;
+    private float maxFreq = 1000;
     private float minFreq = 400;
     private float[] samples = new float[512];
     private float[] freqBands = new float[8];

@@ -29,6 +29,7 @@ public class PlayerScript : MonoBehaviour
     private GameObject playerLives;
     private Text hudScore;
     private GameObject levelDetailsCanvas;
+    private GameObject pauseMenu;
     private Text levelDetailsText;
     private float timeToDisplayDetails = 20;
     private float detailsLoadedTime = 0;
@@ -49,6 +50,20 @@ public class PlayerScript : MonoBehaviour
     private float boostScore;
 
     // Use this for initialization
+
+    void Awake()
+    {
+        hud = GameObject.Find("UI");
+        pauseMenu = GameObject.Find("PauseMenu");
+        playerLives = GameObject.Find("Lives");
+        hudScore = hud.transform.Find("Score").GetComponent<Text>();
+        scoreMultiplierText = hud.transform.Find("Multiplier").GetComponent<Text>();
+
+        levelDetailsCanvas = GameObject.Find("LevelDetails");
+        levelDetailsText = GameObject.Find("Details").GetComponent<Text>();
+
+        numberOfBlocks = (GameObject.FindGameObjectsWithTag("Block")).Length;
+    }
     void Start()
     {
         currentLevel = SceneManager.GetActiveScene().buildIndex;
@@ -62,22 +77,10 @@ public class PlayerScript : MonoBehaviour
 
         levelManager.ChangeColor();
 
-        hud = GameObject.Find("UI");
-
-        levelDetailsCanvas = GameObject.Find("LevelDetails");
-        levelDetailsText = GameObject.Find("Details").GetComponent<Text>();
-
         ShowDetails();
-
-        playerLives = GameObject.Find("Lives");
-        hudScore = hud.transform.Find("Score").GetComponent<Text>();
-
-        scoreMultiplierText = hud.transform.Find("Multiplier").GetComponent<Text>();
 
         hudScoreScale = hudScore.transform.localScale;
         hudScoreOriginialRot = hudScore.transform.rotation;
-
-        numberOfBlocks = (GameObject.FindGameObjectsWithTag("Block")).Length;
     }
 
     private void ShowDetails()
@@ -88,110 +91,113 @@ public class PlayerScript : MonoBehaviour
 
     void Update()
     {
-        if (timeToDisplayDetails > 0 && levelDetailsCanvas.activeInHierarchy == true)
+        if (!pauseMenu.activeInHierarchy)
         {
-            levelDetailsCanvas.GetComponent<CanvasGroup>().alpha -= .001f;
-            timeToDisplayDetails -= Time.deltaTime;
-        }
-        else
-        {
-            levelDetailsCanvas.SetActive(false);
-        }
-
-        // Movement on pc
-        playerPosition.x += Input.GetAxis("Horizontal") * playerVelocity;
-
-        // Get first touch position of finger
-        if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began)
-        {
-            touchOrgPos = Camera.main.ScreenToWorldPoint(new Vector3(Input.GetTouch(0).position.x, Input.GetTouch(0).position.y, 5));
-            maintainedDist = touchOrgPos.x - playerPosition.x;
-        }
-
-        // Move player based on first touch position
-        if (Input.touchCount == 1)
-        {
-            if (levelDetailsCanvas.activeInHierarchy == true)
+            if (timeToDisplayDetails > 0 && levelDetailsCanvas.activeInHierarchy == true)
             {
-                levelDetailsCanvas.SetActive(false);
-                timeToDisplayDetails = 2;
-
-                GameObject.Find("Ball").SendMessage("PlayerReady");
-            }
-            touchPos = Camera.main.ScreenToWorldPoint(new Vector3(Input.GetTouch(0).position.x, Input.GetTouch(0).position.y, 5));
-            playerPosition = new Vector3(touchPos.x - maintainedDist, playerPosition.y, playerPosition.z);
-        }
-        if (Input.touchCount == 2 || Input.GetKeyDown(KeyCode.K))
-        {
-            if (Time.timeScale == 1)
-            {
-                Time.timeScale = .2f;
-                Time.fixedDeltaTime = Time.timeScale * .02f;
+                levelDetailsCanvas.GetComponent<CanvasGroup>().alpha -= .001f;
+                timeToDisplayDetails -= Time.deltaTime;
             }
             else
             {
-                Time.timeScale = 1;
-                Time.fixedDeltaTime = Time.timeScale * .02f;
+                levelDetailsCanvas.SetActive(false);
             }
+
+            // Movement on pc
+            playerPosition.x += Input.GetAxis("Horizontal") * playerVelocity;
+
+            // Get first touch position of finger
+            if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began)
+            {
+                touchOrgPos = Camera.main.ScreenToWorldPoint(new Vector3(Input.GetTouch(0).position.x, Input.GetTouch(0).position.y, 5));
+                maintainedDist = touchOrgPos.x - playerPosition.x;
+            }
+
+            // Move player based on first touch position
+            if (Input.touchCount == 1)
+            {
+                if (levelDetailsCanvas.activeInHierarchy == true)
+                {
+                    levelDetailsCanvas.SetActive(false);
+                    timeToDisplayDetails = 2;
+
+                    GameObject.Find("Ball").SendMessage("PlayerReady");
+                }
+                touchPos = Camera.main.ScreenToWorldPoint(new Vector3(Input.GetTouch(0).position.x, Input.GetTouch(0).position.y, 5));
+                playerPosition = new Vector3(touchPos.x - maintainedDist, playerPosition.y, playerPosition.z);
+            }
+            if (Input.touchCount == 2 || Input.GetKeyDown(KeyCode.K))
+            {
+                if (Time.timeScale == 1)
+                {
+                    Time.timeScale = .2f;
+                    Time.fixedDeltaTime = Time.timeScale * .02f;
+                }
+                else
+                {
+                    Time.timeScale = 1;
+                    Time.fixedDeltaTime = Time.timeScale * .02f;
+                }
+            }
+
+            // Switch level with 2 finger gesture
+            if ((Input.touchCount == 3 && Input.GetTouch(0).phase == TouchPhase.Began) || Input.GetKeyDown("n"))
+            {
+                if (currentLevel == SceneManager.sceneCountInBuildSettings - 1) SceneManager.LoadScene(LevelManager.numberOfMenuScenes);
+                else SceneManager.LoadScene(currentLevel + 1);
+            }
+
+            // Quit
+            if (Input.GetKeyDown(KeyCode.Escape))
+            {
+                GameObject.Find("ButtonManager").GetComponent<ButtonManager>().PauseGame();
+            }
+
+            // Player boundaries
+            if (playerPosition.x < -boundary)
+            {
+                playerPosition = new Vector3(-boundary, playerPosition.y, playerPosition.z);
+            }
+            if (playerPosition.x > boundary)
+            {
+                playerPosition = new Vector3(boundary, playerPosition.y, playerPosition.z);
+            }
+
+            // update the game object transform
+            transform.position = playerPosition;
+
+            // Wobble playerscore
+            if (currentWobbleTimer > 0 && Time.timeScale > 0)
+            {
+                var wobblePos = UnityEngine.Random.insideUnitCircle * (wobbleAmount * Mathf.Clamp(scoreMultiplier / 2, 1, 2f));
+
+                hudScore.transform.localScale = new Vector3(hudScoreScale.x + Math.Abs(wobblePos.x), hudScoreScale.y + Math.Abs(wobblePos.x), hudScoreScale.z);
+
+                currentWobbleTimer -= Time.deltaTime;
+            }
+            else if (isScoreWobbling || hudScore.transform.localScale != hudScoreScale)
+            {
+
+                hudScore.transform.localScale = hudScoreScale;
+
+                isScoreWobbling = false;
+            }
+
+            if (Time.time - lastPoint > 1f)
+            {
+                scoreMultiplier = 1f;
+            }
+
+            // update hud
+            pointAnimTimer += Time.deltaTime;
+            float prcComplete = pointAnimTimer / (wobbleTimer * 2.1f);
+            hudScore.text = Math.Ceiling(Mathf.Lerp(savedDisplayedScore, playerPoints, prcComplete)).ToString();
+
+            scoreMultiplierText.text = "x" + (scoreMultiplier + boostScore).ToString();
+
+            // Check game state
+            WinLose();
         }
-
-        // Switch level with 2 finger gesture
-        if ((Input.touchCount == 3 && Input.GetTouch(0).phase == TouchPhase.Began) || Input.GetKeyDown("n"))
-        {
-            if (currentLevel == SceneManager.sceneCountInBuildSettings - 1) SceneManager.LoadScene(LevelManager.numberOfMenuScenes);
-            else SceneManager.LoadScene(currentLevel + 1);
-        }
-
-        // Quit
-        if (Input.GetKeyDown(KeyCode.Escape))
-        {
-            GameObject.Find("ButtonManager").GetComponent<ButtonManager>().PauseGame();
-        }
-
-        // Player boundaries
-        if (playerPosition.x < -boundary)
-        {
-            playerPosition = new Vector3(-boundary, playerPosition.y, playerPosition.z);
-        }
-        if (playerPosition.x > boundary)
-        {
-            playerPosition = new Vector3(boundary, playerPosition.y, playerPosition.z);
-        }
-
-        // update the game object transform
-        transform.position = playerPosition;
-
-        // Wobble playerscore
-        if (currentWobbleTimer > 0 && Time.timeScale > 0)
-        {
-            var wobblePos = UnityEngine.Random.insideUnitCircle * (wobbleAmount * Mathf.Clamp(scoreMultiplier/2, 1, 2f));
-
-            hudScore.transform.localScale = new Vector3(hudScoreScale.x + Math.Abs(wobblePos.x), hudScoreScale.y + Math.Abs(wobblePos.x), hudScoreScale.z);
-
-            currentWobbleTimer -= Time.deltaTime;
-        }
-        else if (isScoreWobbling || hudScore.transform.localScale != hudScoreScale)
-        {
-
-            hudScore.transform.localScale = hudScoreScale;
-
-            isScoreWobbling = false;
-        }
-
-        if (Time.time - lastPoint > 1f)
-        {
-            scoreMultiplier = 1f;
-        }
-
-        // update hud
-        pointAnimTimer += Time.deltaTime;
-        float prcComplete = pointAnimTimer / (wobbleTimer * 2.1f);
-        hudScore.text = Math.Ceiling(Mathf.Lerp(savedDisplayedScore, playerPoints, prcComplete)).ToString();
-
-        scoreMultiplierText.text = "x" + (scoreMultiplier + boostScore).ToString();
-
-        // Check game state
-        WinLose();
     }
 
     void AddPoints(int points)

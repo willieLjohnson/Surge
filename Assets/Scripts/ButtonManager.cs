@@ -11,14 +11,18 @@ public class ButtonManager : MonoBehaviour
     public GameObject pauseMenu;
 
     private GameObject player;
-    
-    void Start()
+
+    void Awake()
     {
         if (SceneManager.GetActiveScene().buildIndex > 3)
         {
             pauseMenu.SetActive(false);
             player = GameObject.Find("Player");
         }
+    }
+    void Start()
+    {
+
     }
     public void PlayButton()
     {
@@ -86,7 +90,8 @@ public class ButtonManager : MonoBehaviour
         Time.timeScale = 1;
     }
 
-    public void GoToNCSPlaylist() {
+    public void GoToNCSPlaylist()
+    {
         Application.OpenURL("https://www.youtube.com/playlist?list=PLGXgNrVCYDVZaXQlykaYEa_SMCcuKOCW0");
     }
 

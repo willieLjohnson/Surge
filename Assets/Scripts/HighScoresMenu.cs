@@ -32,8 +32,7 @@ public class HighScoresMenu : MonoBehaviour {
 
 	void updateLevelScores() {
 		highScores.text = "";
-		print("Update Level Scores");
-		print("Number of levels: " + numberOfLevels);
+
 		for(var i = 1 ; i <= numberOfLevels + 1; i++) {
 			var level = "Level " + i;
 			highScores.text += level + ": " + PlayerPrefs.GetInt("HighScoreLevel" + i).ToString() + "\n";

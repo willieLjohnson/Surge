@@ -16,7 +16,7 @@ public class ButtonManager : MonoBehaviour
     {
         if (SceneManager.GetActiveScene().buildIndex > 3)
         {
-            pauseMenu.SetActive(false);
+            pauseMenu = GameObject.Find("PauseMenu");
             player = GameObject.Find("Player");
         }
     }

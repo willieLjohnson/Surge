@@ -55,6 +55,7 @@ public class PlayerScript : MonoBehaviour
     {
         hud = GameObject.Find("UI");
         pauseMenu = GameObject.Find("PauseMenu");
+
         playerLives = GameObject.Find("Lives");
         hudScore = hud.transform.Find("Score").GetComponent<Text>();
         scoreMultiplierText = hud.transform.Find("Multiplier").GetComponent<Text>();
@@ -67,6 +68,9 @@ public class PlayerScript : MonoBehaviour
     void Start()
     {
         currentLevel = SceneManager.GetActiveScene().buildIndex;
+
+
+        pauseMenu.SetActive(false);
 
         // get the initial position of the game object
         playerPosition = gameObject.transform.position;
@@ -147,12 +151,6 @@ public class PlayerScript : MonoBehaviour
                 else SceneManager.LoadScene(currentLevel + 1);
             }
 
-            // Quit
-            if (Input.GetKeyDown(KeyCode.Escape))
-            {
-                GameObject.Find("ButtonManager").GetComponent<ButtonManager>().PauseGame();
-            }
-
             // Player boundaries
             if (playerPosition.x < -boundary)
             {
@@ -198,6 +196,13 @@ public class PlayerScript : MonoBehaviour
             // Check game state
             WinLose();
         }
+
+
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            GameObject.Find("ButtonManager").GetComponent<ButtonManager>().PauseGame();
+        }
+
     }
 
     void AddPoints(int points)

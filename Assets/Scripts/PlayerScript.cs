@@ -6,130 +6,133 @@ using UnityEngine.UI;
 
 public class PlayerScript : MonoBehaviour
 {
+    // Magic numbers
+    private float boundary = 4.7f;
+    private float playerVelocity = 0.3f;
 
-    public float playerVelocity;
+    private float levelInfoDisplayDuration = 20f;
+
+    private float scoreWobbleAmount = 1.4f;
+    private float scoreWobbleDuration = 0.1f;
+    private float scoreLerpDuration = 0.1f * 2.1f;
+    private float scoreMultiplier = 1f;
+
+    private bool debug = false;
+
+    // UI
+    private GameObject levelInfoCanvas;
+    private GameObject pauseMenuCanvas;
+    private Text scoreText;
+    private GameObject playerLives;
+    private Text levelInfoText;
+    private Text scoreMultiplierText;
+
+    // Player
     private Vector3 playerPosition;
-    private Vector3 touchPos;
-    public float boundary;
-    private int playerPoints;
-    private int highestScore;
-    private int currentLevelHighScore;
-
-    public AudioClip breakSound;
-    public AudioClip lifeSound;
-
-    private Vector3 touchOrgPos;
-    private float maintainedDist;
-    private float lastBreakTime;
-
-    public LevelManager levelManager;
+    private int playerScore;
+    private int highScore;
     private int currentLevel;
 
-    private GameObject hud;
-    private GameObject playerLives;
-    private Text hudScore;
-    private GameObject levelDetailsCanvas;
-    private GameObject pauseMenu;
-    private Text levelDetailsText;
-    private float timeToDisplayDetails = 20;
-    private float detailsLoadedTime = 0;
-    private int blocksDestroyed;
-    private int numberOfBlocks;
+    private float maintainedDist;
+
+    // Sound Fx
+    [Header("Sound Fx")]
+    public AudioClip breakBlockSound;
+    public AudioClip loseLifeSound;
+
+    // Visual Fx
+    private LevelManager levelManager;
+
+    private float lastBreakTime;
+    private int numberOfBlocksDestroyed;
+    private int numberOfBlocksTotal;
+
+    private Vector3 scoreTextOriginScale;
     private bool isScoreWobbling;
-    private float currentWobbleTimer;
-    private float wobbleAmount = 1.4f;
-    private Vector3 hudScoreScale;
-    private float wobbleTimer = .1f;
-    private Quaternion hudScoreOriginialRot;
-    private int scoreRotationSide = 1;
-    private float lastPoint;
-    private float scoreMultiplier = 1;
-    private Text scoreMultiplierText;
+    private float scoreWobbleTimer;
+
+    private float lastScoreTime;
     private int savedDisplayedScore;
-    private float pointAnimTimer;
-    private float boostScore;
-
-    // Use this for initialization
-
+    private float scoreLerpTimer;
+    private float scoreBoostFactor;
     void Awake()
     {
-        hud = GameObject.Find("UI");
-        pauseMenu = GameObject.Find("PauseMenu");
-
+        // UI
         playerLives = GameObject.Find("Lives");
-        hudScore = hud.transform.Find("Score").GetComponent<Text>();
-        scoreMultiplierText = hud.transform.Find("Multiplier").GetComponent<Text>();
+        scoreText = GameObject.Find("Score").GetComponent<Text>();
+        scoreMultiplierText = GameObject.Find("Multiplier").GetComponent<Text>();
 
-        levelDetailsCanvas = GameObject.Find("LevelDetails");
-        levelDetailsText = GameObject.Find("Details").GetComponent<Text>();
+        pauseMenuCanvas = GameObject.Find("PauseMenu");
 
-        numberOfBlocks = (GameObject.FindGameObjectsWithTag("Block")).Length;
+        levelInfoCanvas = GameObject.Find("LevelDetails");
+        levelInfoText = GameObject.Find("Details").GetComponent<Text>();
+
+        // Visual Fx
+        levelManager = GameObject.Find("LevelManager").GetComponent<LevelManager>();
+
+        numberOfBlocksTotal = (GameObject.FindGameObjectsWithTag("Block")).Length;
     }
     void Start()
     {
+        pauseMenuCanvas.SetActive(false);
         currentLevel = SceneManager.GetActiveScene().buildIndex;
+        levelInfoText.text = "Level:\n" + (currentLevel - LevelManager.numberOfMenuScenes + 1) + "\n" + "Song:\n" + levelManager.songName + "\n" + "High Score:\n" + highScore;
 
-
-        pauseMenu.SetActive(false);
-
-        // get the initial position of the game object
+        playerScore = 0;
         playerPosition = gameObject.transform.position;
 
-        playerPoints = 0;
-        highestScore = PlayerPrefs.GetInt("HighestScore", 0);
-        currentLevelHighScore = PlayerPrefs.GetInt("HighScoreLevel" + (currentLevel - LevelManager.numberOfMenuScenes + 1), 0);
+        highScore = PlayerPrefs.GetInt("HighScoreLevel" + (currentLevel - LevelManager.numberOfMenuScenes + 1), 0);
+
+        scoreTextOriginScale = scoreText.transform.localScale;
 
         levelManager.ChangeColor();
-
-        ShowDetails();
-
-        hudScoreScale = hudScore.transform.localScale;
-        hudScoreOriginialRot = hudScore.transform.rotation;
-    }
-
-    private void ShowDetails()
-    {
-        levelDetailsText.text = "Level:\n" + (currentLevel - LevelManager.numberOfMenuScenes + 1) + "\n" + "Song:\n" + levelManager.songName + "\n" + "High Score:\n" + currentLevelHighScore;
-        detailsLoadedTime = Time.time;
     }
 
     void Update()
     {
-        if (!pauseMenu.activeInHierarchy)
+        if (!pauseMenuCanvas.activeInHierarchy)
         {
-            if (timeToDisplayDetails > 0 && levelDetailsCanvas.activeInHierarchy == true)
+            HandleInput();
+            UpdatePlayer();
+            UpdateVisualFx();
+        }
+
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            GameObject.Find("ButtonManager").GetComponent<ButtonManager>().PauseGame();
+        }
+    }
+
+    private void HandleInput()
+    {
+        // Movement on pc
+        playerPosition.x += Input.GetAxis("Horizontal") * playerVelocity;
+
+        // Get first touch position of finger
+        if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began)
+        {
+            Vector3 touchOrgPos = Camera.main.ScreenToWorldPoint(new Vector3(Input.GetTouch(0).position.x, Input.GetTouch(0).position.y, 5));
+            maintainedDist = touchOrgPos.x - playerPosition.x;
+        }
+
+        // Move player based on first touch position
+        if (Input.touchCount == 1)
+        {
+            if (levelInfoCanvas.activeInHierarchy == true)
             {
-                levelDetailsCanvas.GetComponent<CanvasGroup>().alpha -= .001f;
-                timeToDisplayDetails -= Time.deltaTime;
-            }
-            else
-            {
-                levelDetailsCanvas.SetActive(false);
+                levelInfoCanvas.SetActive(false);
+                levelInfoDisplayDuration = 2;
+
+                GameObject.Find("Ball").SendMessage("PlayerReady");
             }
 
-            // Movement on pc
-            playerPosition.x += Input.GetAxis("Horizontal") * playerVelocity;
+            Vector3 touchPos = Camera.main.ScreenToWorldPoint(new Vector3(Input.GetTouch(0).position.x, Input.GetTouch(0).position.y, 5));
+            playerPosition = new Vector3(touchPos.x - maintainedDist, playerPosition.y, playerPosition.z);
+        }
 
-            // Get first touch position of finger
-            if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began)
-            {
-                touchOrgPos = Camera.main.ScreenToWorldPoint(new Vector3(Input.GetTouch(0).position.x, Input.GetTouch(0).position.y, 5));
-                maintainedDist = touchOrgPos.x - playerPosition.x;
-            }
-
-            // Move player based on first touch position
-            if (Input.touchCount == 1)
-            {
-                if (levelDetailsCanvas.activeInHierarchy == true)
-                {
-                    levelDetailsCanvas.SetActive(false);
-                    timeToDisplayDetails = 2;
-
-                    GameObject.Find("Ball").SendMessage("PlayerReady");
-                }
-                touchPos = Camera.main.ScreenToWorldPoint(new Vector3(Input.GetTouch(0).position.x, Input.GetTouch(0).position.y, 5));
-                playerPosition = new Vector3(touchPos.x - maintainedDist, playerPosition.y, playerPosition.z);
-            }
+        if (debug)
+        {
+            // Slow motion; Debug feature only
             if (Input.touchCount == 2 || Input.GetKeyDown(KeyCode.K))
             {
                 if (Time.timeScale == 1)
@@ -144,77 +147,80 @@ public class PlayerScript : MonoBehaviour
                 }
             }
 
-            // Switch level with 2 finger gesture
+            // Switch level; Debug feature only
             if ((Input.touchCount == 3 && Input.GetTouch(0).phase == TouchPhase.Began) || Input.GetKeyDown("n"))
             {
                 if (currentLevel == SceneManager.sceneCountInBuildSettings - 1) SceneManager.LoadScene(LevelManager.numberOfMenuScenes);
                 else SceneManager.LoadScene(currentLevel + 1);
             }
-
-            // Player boundaries
-            if (playerPosition.x < -boundary)
-            {
-                playerPosition = new Vector3(-boundary, playerPosition.y, playerPosition.z);
-            }
-            if (playerPosition.x > boundary)
-            {
-                playerPosition = new Vector3(boundary, playerPosition.y, playerPosition.z);
-            }
-
-            // update the game object transform
-            transform.position = playerPosition;
-
-            // Wobble playerscore
-            if (currentWobbleTimer > 0 && Time.timeScale > 0)
-            {
-                var wobblePos = UnityEngine.Random.insideUnitCircle * (wobbleAmount * Mathf.Clamp(scoreMultiplier / 2, 1, 2f));
-
-                hudScore.transform.localScale = new Vector3(hudScoreScale.x + Math.Abs(wobblePos.x), hudScoreScale.y + Math.Abs(wobblePos.x), hudScoreScale.z);
-
-                currentWobbleTimer -= Time.deltaTime;
-            }
-            else if (isScoreWobbling || hudScore.transform.localScale != hudScoreScale)
-            {
-
-                hudScore.transform.localScale = hudScoreScale;
-
-                isScoreWobbling = false;
-            }
-
-            if (Time.time - lastPoint > 1f)
-            {
-                scoreMultiplier = 1f;
-            }
-
-            // update hud
-            pointAnimTimer += Time.deltaTime;
-            float prcComplete = pointAnimTimer / (wobbleTimer * 2.1f);
-            hudScore.text = Math.Ceiling(Mathf.Lerp(savedDisplayedScore, playerPoints, prcComplete)).ToString();
-
-            scoreMultiplierText.text = "x" + (scoreMultiplier + boostScore).ToString();
-
-            // Check game state
-            WinLose();
         }
+    }
 
-
-        if (Input.GetKeyDown(KeyCode.Escape))
+    public void UpdatePlayer()
+    {
+        // Player boundaries
+        if (playerPosition.x < -boundary)
         {
-            GameObject.Find("ButtonManager").GetComponent<ButtonManager>().PauseGame();
+            playerPosition = new Vector3(-boundary, playerPosition.y, playerPosition.z);
+        }
+        if (playerPosition.x > boundary)
+        {
+            playerPosition = new Vector3(boundary, playerPosition.y, playerPosition.z);
         }
 
+        transform.position = playerPosition;
+
+        if (Time.time - lastScoreTime > 1f)
+        {
+            scoreMultiplier = 1f;
+        }
+
+        WinLose();
+    }
+
+    private void UpdateVisualFx()
+    {
+        if (levelInfoDisplayDuration > 0 && levelInfoCanvas.activeInHierarchy == true)
+        {
+            levelInfoCanvas.GetComponent<CanvasGroup>().alpha -= .001f;
+            levelInfoDisplayDuration -= Time.deltaTime;
+        }
+        else
+        {
+            levelInfoCanvas.SetActive(false);
+        }
+
+        // Wobble score
+        if (scoreWobbleTimer > 0 && Time.timeScale > 0)
+        {
+            var wobblePos = UnityEngine.Random.insideUnitCircle * (scoreWobbleAmount * Mathf.Clamp(scoreMultiplier / 2, 1, 2f));
+
+            scoreText.transform.localScale = new Vector3(scoreTextOriginScale.x + Math.Abs(wobblePos.x), scoreTextOriginScale.y + Math.Abs(wobblePos.x), scoreTextOriginScale.z);
+
+            scoreWobbleTimer -= Time.deltaTime;
+        }
+        else if (isScoreWobbling || scoreText.transform.localScale != scoreTextOriginScale)
+        {
+            scoreText.transform.localScale = scoreTextOriginScale;
+
+            isScoreWobbling = false;
+        }
+
+        // Lerp Score 
+        scoreLerpTimer += Time.deltaTime;
+        float prcComplete = scoreLerpTimer / (scoreLerpDuration);
+        scoreText.text = Math.Ceiling(Mathf.Lerp(savedDisplayedScore, playerScore, prcComplete)).ToString();
+
+        scoreMultiplierText.text = "x" + (scoreMultiplier + scoreBoostFactor).ToString();
     }
 
     void AddPoints(int points)
     {
-        savedDisplayedScore = Int32.Parse(hudScore.text);
-        playerPoints += (int)(points * (scoreMultiplier + boostScore));
-        pointAnimTimer = 0f;
+        savedDisplayedScore = Int32.Parse(scoreText.text);
+        playerScore += (int)(points * (scoreMultiplier + scoreBoostFactor));
+        scoreLerpTimer = 0f;
 
-        scoreRotationSide *= -1;
-        // hudScore.transform.Rotate(Vector3.forward, 45 * scoreRotationSide);
-
-        if (Time.time - lastPoint < 1f)
+        if (Time.time - lastScoreTime < 1f)
         {
             scoreMultiplier += 0.5f;
         }
@@ -223,21 +229,21 @@ public class PlayerScript : MonoBehaviour
             scoreMultiplier = 1f;
         }
 
-        lastPoint = Time.time;
+        lastScoreTime = Time.time;
         WobbleScore();
     }
 
     void Boost(int amount)
     {
-        boostScore += amount;
+        scoreBoostFactor += amount;
     }
 
     void IncrementBlocksDestroyed()
     {
-        blocksDestroyed++;
+        numberOfBlocksDestroyed++;
 
         if (Time.time - lastBreakTime > .01f)
-            GetComponent<AudioSource>().PlayOneShot(breakSound);
+            GetComponent<AudioSource>().PlayOneShot(breakBlockSound);
 
         if (Time.time - lastBreakTime < .7f)
         {
@@ -250,17 +256,17 @@ public class PlayerScript : MonoBehaviour
             lastBreakTime = Time.time;
         }
     }
-
+    
     void TakeLife()
     {
         Destroy(playerLives.transform.GetChild(playerLives.transform.childCount - 1).gameObject, .1f);
         GetComponent<AudioSource>().pitch = 1f;
-        GetComponent<AudioSource>().PlayOneShot(lifeSound);
+        GetComponent<AudioSource>().PlayOneShot(loseLifeSound);
 
-        boostScore = 0;
+        scoreBoostFactor = 0;
         scoreMultiplier = 1;
 
-        scoreMultiplierText.text = "x" + (scoreMultiplier + boostScore).ToString();
+        scoreMultiplierText.text = "x" + (scoreMultiplier + scoreBoostFactor).ToString();
     }
 
     void WinLose()
@@ -268,21 +274,21 @@ public class PlayerScript : MonoBehaviour
         // restart the game
         if (playerLives.transform.childCount == 0)
         {
+            if (playerScore > PlayerPrefs.GetInt("HighestScore", 0))
+            {
+                PlayerPrefs.SetInt("HighestScore", playerScore);
+            }
+
+            if (playerScore > highScore)
+            {
+                PlayerPrefs.SetInt("HighScoreLevel" + (currentLevel - LevelManager.numberOfMenuScenes + 1), playerScore);
+            }
+
             ResetLevel();
-
-            if (playerPoints > highestScore)
-            {
-                PlayerPrefs.SetInt("HighestScore", playerPoints);
-            }
-
-            if (playerPoints > currentLevelHighScore)
-            {
-                PlayerPrefs.SetInt("HighScoreLevel" + (currentLevel - LevelManager.numberOfMenuScenes + 1), playerPoints);
-            }
         }
 
         // chech if all blocks are destroyed
-        if (numberOfBlocks == blocksDestroyed)
+        if (numberOfBlocksTotal == numberOfBlocksDestroyed)
         {
             // next level or quit
             if (currentLevel > SceneManager.sceneCountInBuildSettings) Application.Quit();
@@ -293,12 +299,12 @@ public class PlayerScript : MonoBehaviour
     void WobbleScore()
     {
         isScoreWobbling = true;
-        currentWobbleTimer = wobbleTimer;
+        scoreWobbleTimer = scoreWobbleDuration;
     }
 
     public void ResetLevel()
     {
-        SceneManager.LoadScene(currentLevel);
         Time.timeScale = 1;
+        SceneManager.LoadScene(currentLevel);
     }
 }

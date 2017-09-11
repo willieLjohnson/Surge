@@ -8,8 +8,7 @@ public class ButtonManager : MonoBehaviour
 {
     private bool start;
     private LevelManager levelManager;
-    public GameObject pauseMenu;
-
+    private GameObject pauseMenu;
     private GameObject player;
 
     void Awake()
@@ -76,7 +75,6 @@ public class ButtonManager : MonoBehaviour
     {
         yield return new WaitForSeconds(delayTime);
         LoadLevel(level + (LevelManager.numberOfMenuScenes - 1));
-
     }
 
     public void ReturnToMenu()

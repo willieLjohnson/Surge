@@ -7,22 +7,22 @@ using UnityEngine.UI;
 public class MenuBallScript : MonoBehaviour
 {
     public float ballSpeed;
-    private float lastChange;
-    // private Color newColor;
+    private Vector3 ballOriginScale;
+    
     private bool isWobbling;
-    private float currentWobbleTimer;
-    private float wobbleAmount;
-    private Vector3 ballScale;
     private float wobbleTimer;
+    private float wobbleAmount;
+    private float wobbleDuration;
 
     // Use this for initialization
     void Start()
     {
         wobbleAmount = .1f;
-        wobbleTimer = .2f;
+        wobbleDuration = .2f;
+
+        ballOriginScale = transform.localScale;
+
         GetComponent<Rigidbody2D>().AddForce(new Vector2(UnityEngine.Random.insideUnitCircle.x * ballSpeed, UnityEngine.Random.insideUnitCircle.y * ballSpeed));
-        ballScale = transform.localScale;
-        // newColor = new Color(UnityEngine.Random.insideUnitCircle.y, UnityEngine.Random.insideUnitCircle.x, 1f);
     }
 
     private void Update()
@@ -35,28 +35,19 @@ public class MenuBallScript : MonoBehaviour
             transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
         }
 
-        // // Change color of ball
-        // if (Time.time - lastChange > 3f)
-        // {
-        //     newColor = new Color(UnityEngine.Random.insideUnitCircle.y, UnityEngine.Random.insideUnitCircle.x, UnityEngine.Random.insideUnitCircle.y);
-        //     lastChange = Time.time;
-        // }
-        // GetComponent<Renderer>().material.color = Color.Lerp(GetComponent<Renderer>().material.color, newColor, Mathf.PingPong(Time.time,1.5f));
-
-        // Wobble ball
-        if (currentWobbleTimer > 0)
+        if (wobbleTimer > 0)
         {
             var wobblePos = UnityEngine.Random.insideUnitCircle * wobbleAmount;
 
-            transform.localScale = new Vector3(ballScale.x + Math.Abs(wobblePos.x), ballScale.y + Math.Abs(wobblePos.x), ballScale.z);
+            transform.localScale = new Vector3(ballOriginScale.x + Math.Abs(wobblePos.x), ballOriginScale.y + Math.Abs(wobblePos.x), ballOriginScale.z);
 
-            currentWobbleTimer -= Time.deltaTime;
+            wobbleTimer -= Time.deltaTime;
         }
         else if (isWobbling)
         {
-            if (transform.localScale != ballScale)
+            if (transform.localScale != ballOriginScale)
             {
-                transform.localScale = ballScale;
+                transform.localScale = ballOriginScale;
             }
             isWobbling = false;
         }
@@ -64,7 +55,6 @@ public class MenuBallScript : MonoBehaviour
 
     void OnCollisionEnter2D(Collision2D collision)
     {
-
         GameObject collisionObj = collision.gameObject;
         // particle effet
         GameObject burst = Instantiate(GameObject.Find("Burst"), transform.position, Quaternion.identity);
@@ -74,13 +64,11 @@ public class MenuBallScript : MonoBehaviour
 
         // Wobble ball
         Wobble();
-
-
     }
 
     void Wobble()
     {
         isWobbling = true;
-        currentWobbleTimer = wobbleTimer;
+        wobbleTimer = wobbleDuration;
     }
 }

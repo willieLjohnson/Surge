@@ -145,7 +145,7 @@ public class PlayerScript : MonoBehaviour
         // Quit
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            Application.Quit();
+            GameObject.Find("ButtonManager").GetComponent<ButtonManager>().PauseGame();
         }
 
         // Player boundaries

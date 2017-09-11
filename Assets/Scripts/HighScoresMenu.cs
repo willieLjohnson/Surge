@@ -4,38 +4,40 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public class HighScoresMenu : MonoBehaviour {
-	
-	int numberOfLevels = 0;
+public class HighScoresMenu : MonoBehaviour
+{
+    int numberOfLevels;
+    int highestScore;
+    Text highestScoreText;
+    Text highScores;
 
-	int highestScore;
-	Text highestScoreText;
-	Text highScores;
-	// Use this for initialization
-	void Start () {
-		numberOfLevels = SceneManager.sceneCountInBuildSettings - LevelManager.numberOfMenuScenes - 1;
-		highestScoreText = GameObject.Find("HighestScoreNum").GetComponent<Text>();
-		highScores = GameObject.Find("Scores").GetComponent<Text>(); 
-		updateHighestScore();
-		updateLevelScores();
-	}
-	
-	void Update () {
-		
-	}
+    void Awake()
+    {
+        highestScoreText = GameObject.Find("HighestScoreNum").GetComponent<Text>();
+        highScores = GameObject.Find("Scores").GetComponent<Text>();
+    }
+    void Start()
+    {
+        numberOfLevels = SceneManager.sceneCountInBuildSettings - LevelManager.numberOfMenuScenes - 1;
 
-	void updateHighestScore() {
-		highestScore = PlayerPrefs.GetInt("HighestScore", 0);
-		
-		highestScoreText.text = highestScore.ToString();
-	}
+        updateHighestScore();
+        updateLevelScores();
+    }
 
-	void updateLevelScores() {
-		highScores.text = "";
+    void updateHighestScore()
+    {
+        highestScore = PlayerPrefs.GetInt("HighestScore", 0);
+        highestScoreText.text = highestScore.ToString();
+    }
 
-		for(var i = 1 ; i <= numberOfLevels + 1; i++) {
-			var level = "Level " + i;
-			highScores.text += level + ": " + PlayerPrefs.GetInt("HighScoreLevel" + i).ToString() + "\n";
-		}
-	}
+    void updateLevelScores()
+    {
+        highScores.text = "";
+
+        for (var i = 1; i <= numberOfLevels + 1; i++)
+        {
+            var level = "Level " + i;
+            highScores.text += level + ": " + PlayerPrefs.GetInt("HighScoreLevel" + i).ToString() + "\n";
+        }
+    }
 }

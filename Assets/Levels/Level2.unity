@@ -2373,7 +2373,6 @@ GameObject:
   - component: {fileID: 2124904986}
   - component: {fileID: 2124904985}
   - component: {fileID: 2124904989}
-  - component: {fileID: 2124904988}
   - component: {fileID: 2124904987}
   m_Layer: 0
   m_Name: LevelManager
@@ -2438,13 +2437,6 @@ AudioLowPassFilter:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 0
---- !u!81 &2124904988
-AudioListener:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 2124904984}
-  m_Enabled: 1
 --- !u!82 &2124904989
 AudioSource:
   m_ObjectHideFlags: 0
@@ -2455,7 +2447,7 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
-  m_PlayOnAwake: 1
+  m_PlayOnAwake: 0
   m_Volume: 0.4
   m_Pitch: 1
   Loop: 1

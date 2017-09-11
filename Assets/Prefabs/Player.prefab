@@ -206,11 +206,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5d6d7cebca3d84899a644db375c603a3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerVelocity: 0.3
-  boundary: 4.7
-  breakSound: {fileID: 8300000, guid: 856d7feabad5a9b4ea1d4737015a46e2, type: 3}
-  lifeSound: {fileID: 8300000, guid: 4d8715117e7d7304482fde0fafbe5604, type: 3}
-  world: {fileID: 0}
+  breakBlockSound: {fileID: 8300000, guid: 856d7feabad5a9b4ea1d4737015a46e2, type: 3}
+  loseLifeSound: {fileID: 8300000, guid: 4d8715117e7d7304482fde0fafbe5604, type: 3}
 --- !u!212 &212318700536887246
 SpriteRenderer:
   m_ObjectHideFlags: 1

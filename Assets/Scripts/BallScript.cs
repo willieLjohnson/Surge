@@ -98,7 +98,7 @@ public class BallScript : MonoBehaviour
     void Update()
     {
         // check for user input
-        if (Input.GetButtonDown("Jump") == true || (Input.touchCount == 1 && Input.GetTouch(0).phase == TouchPhase.Ended && Input.GetTouch(0).phase != TouchPhase.Moved && playerObject.GetComponent<PlayerScript>().IsPlayerReady()))
+        if (Input.GetButtonDown("Jump") || (Input.touchCount == 1 && Input.GetTouch(0).phase == TouchPhase.Ended && Input.GetTouch(0).phase != TouchPhase.Moved && playerObject.GetComponent<PlayerScript>().IsPlayerReady()))
         {
             // check if is the first play
             if (!ballIsActive)

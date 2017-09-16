@@ -56,6 +56,7 @@ public class PlayerScript : MonoBehaviour
     private int savedDisplayedScore;
     private float scoreLerpTimer;
     private float scoreBoostFactor;
+    private bool gameOver;
 
     void Awake()
     {
@@ -132,6 +133,12 @@ public class PlayerScript : MonoBehaviour
         {
             levelInfoCanvas.SetActive(false);
             levelInfoDisplayDuration = 2;
+        }
+
+        if ((Input.touchCount == 1 && Input.GetTouch(0).phase == TouchPhase.Ended && gameOver) || (Input.GetButtonDown("Jump") && gameOver))
+        {
+            CancelInvoke();
+            ResetLevel();
         }
 
         if (debug)
@@ -288,10 +295,11 @@ public class PlayerScript : MonoBehaviour
                 PlayerPrefs.SetInt("HighScoreLevel" + (currentLevel - LevelManager.numberOfMenuScenes + 1), playerScore);
             }
 
-            GameObject.Find("GameOverText").GetComponent<Animator>().SetBool("GameOver",true);
-            GameObject.Find("GameOverBackground").GetComponent<Animator>().SetBool("GameOver",true);
+            GameObject.Find("GameOverText").GetComponent<Animator>().SetBool("GameOver", true);
+            GameObject.Find("GameOverBackground").GetComponent<Animator>().SetBool("GameOver", true);
+            gameOver = true;
 
-           Invoke("ResetLevel", 5); 
+            Invoke("ResetLevel", 5);
         }
 
         // chech if all blocks are destroyed
@@ -310,7 +318,11 @@ public class PlayerScript : MonoBehaviour
     }
 
     public void ResetLevel()
-    {
+    {            
+        gameOver = false;
+
+        GameObject.Find("GameOverText").GetComponent<Animator>().SetBool("GameOver", false);
+        GameObject.Find("GameOverBackground").GetComponent<Animator>().SetBool("GameOver", false);
         Time.timeScale = 1;
         SceneManager.LoadScene(currentLevel);
     }

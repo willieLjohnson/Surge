@@ -90,6 +90,9 @@ public class PlayerScript : MonoBehaviour
         scoreTextOriginScale = scoreText.transform.localScale;
 
         levelManager.ChangeColor();
+
+      
+        pauseMenuCanvas.SetActive(false);
     }
 
     void Update()
@@ -137,7 +140,6 @@ public class PlayerScript : MonoBehaviour
 
         if ((Input.touchCount == 1 && Input.GetTouch(0).phase == TouchPhase.Ended && gameOver) || (Input.GetButtonDown("Jump") && gameOver))
         {
-            CancelInvoke();
             ResetLevel();
         }
 
@@ -299,7 +301,8 @@ public class PlayerScript : MonoBehaviour
             GameObject.Find("GameOverBackground").GetComponent<Animator>().SetBool("GameOver", true);
             gameOver = true;
 
-            Invoke("ResetLevel", 5);
+
+            levelManager.GetComponent<AudioSource>().pitch = 0.20f;
         }
 
         // chech if all blocks are destroyed
@@ -324,6 +327,7 @@ public class PlayerScript : MonoBehaviour
         GameObject.Find("GameOverText").GetComponent<Animator>().SetBool("GameOver", false);
         GameObject.Find("GameOverBackground").GetComponent<Animator>().SetBool("GameOver", false);
         Time.timeScale = 1;
+        levelManager.GetComponent<AudioSource>().pitch = 1;
         SceneManager.LoadScene(currentLevel);
     }
 

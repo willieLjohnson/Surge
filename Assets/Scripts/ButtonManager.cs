@@ -23,9 +23,6 @@ public class ButtonManager : MonoBehaviour
 
     }
 
-    void Start() {
-        pauseMenu.SetActive(false);
-    }
     public void PlayButton()
     {
         if (SplashScreen.isFinished) SceneManager.LoadScene(1);

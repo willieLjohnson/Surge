@@ -36,13 +36,11 @@ public class LevelManager : MonoBehaviour
 
     private GameObject hud;
     private Color burstOpColor;
-
-    private GameObject pauseMenu;
     private Text levelDetailsText;
     private float intensity = 6f;
     private float freq;
     private bool muffled;
-    private float maxFreq = 1000;
+    private float maxFreq = 22000;
     private float minFreq = 400;
     private float[] samples = new float[512];
     private float[] freqBands = new float[8];
@@ -50,7 +48,7 @@ public class LevelManager : MonoBehaviour
     private float[] bufferDecrease = new float[8];
     public string songName;
     public static int numberOfMenuScenes =  4;
-
+    
     public void Update()
     {
         if (SceneManager.GetActiveScene().buildIndex > numberOfMenuScenes - 1)
@@ -191,6 +189,7 @@ public class LevelManager : MonoBehaviour
             {
                 hudElement.GetComponent<Text>().color = playerColor;
                 if (hudElement.name == "CurrentLevel") hudElement.GetComponent<Text>().text = "" + (SceneManager.GetActiveScene().buildIndex - numberOfMenuScenes + 1);
+                if (hudElement.name == "GameOverScreen") hudElement.GetChild(0).GetComponent<Text>().color = new Color(playerColor.r, playerColor.g, playerColor.b, hudElement.GetChild(0).GetComponent<Text>().color.a);
             }
             else if (hudElement.GetComponent<Image>() != null)
             {

@@ -4,12 +4,20 @@ using System;
 
 public class BallScript : MonoBehaviour
 {
+    private static float wobbleTimer = 0.2f;
+    private static float wobbleAmount = 0.4f;
+
+    private object flare = 1f;
 
     private bool ballIsActive;
     private Vector3 ballPosition;
     private Vector3 ballScale;
     private Vector2 ballInitialForce;
-    public Color ballColor;
+    private Color ballColor;
+
+    // Sound 
+    public AudioClip hitSound;
+    public AudioClip hitBlockSound;
 
     private Quaternion ballRotation;
 
@@ -32,18 +40,16 @@ public class BallScript : MonoBehaviour
     private Animator ballAnim;
     private Animator playerAnim;
 
-    // Sound 
-    public AudioClip hitSound;
-    public AudioClip hitBlockSound;
     private float currentWobbleTimer;
-    private static float wobbleTimer = .2f;
+
     private bool isWobbling;
-    private static float wobbleAmount = .4f;
+
     private float lastHitTime;
-    private object flare = 1f;
+
     private bool bgMusicIsStarted;
 
-    void Awake() {
+    void Awake()
+    {
         // get block parents
         oneBlocks = GameObject.Find("One").transform;
         twoBlocks = GameObject.Find("Two").transform;
@@ -92,7 +98,7 @@ public class BallScript : MonoBehaviour
     void Update()
     {
         // check for user input
-        if (Input.GetButtonDown("Jump") == true || (Input.touchCount == 1 && Input.GetTouch(0).phase == TouchPhase.Began && Input.GetTouch(0).phase != TouchPhase.Moved && playerObject.GetComponent<PlayerScript>().IsPlayerReady()))
+        if (Input.GetButtonDown("Jump") == true || (Input.touchCount == 1 && Input.GetTouch(0).phase == TouchPhase.Ended && Input.GetTouch(0).phase != TouchPhase.Moved && playerObject.GetComponent<PlayerScript>().IsPlayerReady()))
         {
             // check if is the first play
             if (!ballIsActive)
@@ -118,10 +124,13 @@ public class BallScript : MonoBehaviour
                 // set ball active
                 ballIsActive = true;
 
-                if (!bgMusicIsStarted) {
+                if (!bgMusicIsStarted)
+                {
                     world.StartBackgroundMusic();
                     bgMusicIsStarted = true;
-                } else {
+                }
+                else
+                {
                     world.MuffleBackgroundMusic();
                 }
 

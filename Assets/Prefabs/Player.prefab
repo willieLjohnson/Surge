@@ -39,6 +39,7 @@ GameObject:
   - component: {fileID: 61697823969757832}
   - component: {fileID: 82312683142882548}
   - component: {fileID: 95373334061524074}
+  - component: {fileID: 114844022154079022}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -208,6 +209,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   breakBlockSound: {fileID: 8300000, guid: 856d7feabad5a9b4ea1d4737015a46e2, type: 3}
   loseLifeSound: {fileID: 8300000, guid: 4d8715117e7d7304482fde0fafbe5604, type: 3}
+--- !u!114 &114844022154079022
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1734450473181202}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b6b2d4e14b6fa452b848196ee40cb1eb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!212 &212318700536887246
 SpriteRenderer:
   m_ObjectHideFlags: 1

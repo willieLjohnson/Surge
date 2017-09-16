@@ -18,10 +18,13 @@ public class ButtonManager : MonoBehaviour
             pauseMenu = GameObject.Find("PauseMenu");
             player = GameObject.Find("Player");
         }
-    }
-    void Start()
-    {
 
+        Application.targetFrameRate = 60;
+
+    }
+
+    void Start() {
+        pauseMenu.SetActive(false);
     }
     public void PlayButton()
     {

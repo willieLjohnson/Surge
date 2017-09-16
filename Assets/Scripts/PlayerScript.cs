@@ -67,7 +67,7 @@ public class PlayerScript : MonoBehaviour
         pauseMenuCanvas = GameObject.Find("PauseMenu");
 
         levelInfoCanvas = GameObject.Find("LevelDetails");
-        levelInfoText = GameObject.Find("Details").GetComponent<Text>();
+        levelInfoText = levelInfoCanvas.transform.GetChild(1).GetComponent<Text>();
 
         // Visual Fx
         levelManager = GameObject.Find("LevelManager").GetComponent<LevelManager>();
@@ -76,15 +76,15 @@ public class PlayerScript : MonoBehaviour
     }
     void Start()
     {
-        pauseMenuCanvas.SetActive(false);
         currentLevel = SceneManager.GetActiveScene().buildIndex;
+
+        highScore = PlayerPrefs.GetInt("HighScoreLevel" + (currentLevel - LevelManager.numberOfMenuScenes + 1), 0);
         levelInfoText.text = "Level:\n" + (currentLevel - LevelManager.numberOfMenuScenes + 1) + "\n" + "Song:\n" + levelManager.songName + "\n" + "High Score:\n" + highScore;
 
         playerScore = 0;
         playerPosition = gameObject.transform.position;
         playerReady = false;
 
-        highScore = PlayerPrefs.GetInt("HighScoreLevel" + (currentLevel - LevelManager.numberOfMenuScenes + 1), 0);
 
         scoreTextOriginScale = scoreText.transform.localScale;
 
@@ -127,7 +127,7 @@ public class PlayerScript : MonoBehaviour
 
             playerReady = true;
         }
-        
+
         if (Input.touchCount == 1 && Input.GetTouch(0).phase == TouchPhase.Began && levelInfoCanvas.activeInHierarchy)
         {
             levelInfoCanvas.SetActive(false);
@@ -210,7 +210,7 @@ public class PlayerScript : MonoBehaviour
             isScoreWobbling = false;
         }
 
-        // Lerp Score 
+        // Lerp Score
         scoreLerpTimer += Time.deltaTime;
         float prcComplete = scoreLerpTimer / (scoreLerpDuration);
         scoreText.text = Math.Ceiling(Mathf.Lerp(savedDisplayedScore, playerScore, prcComplete)).ToString();
@@ -288,7 +288,10 @@ public class PlayerScript : MonoBehaviour
                 PlayerPrefs.SetInt("HighScoreLevel" + (currentLevel - LevelManager.numberOfMenuScenes + 1), playerScore);
             }
 
-            ResetLevel();
+            GameObject.Find("GameOverText").GetComponent<Animator>().SetBool("GameOver",true);
+            GameObject.Find("GameOverBackground").GetComponent<Animator>().SetBool("GameOver",true);
+
+           Invoke("ResetLevel", 5); 
         }
 
         // chech if all blocks are destroyed

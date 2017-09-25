@@ -122,16 +122,15 @@ public class PlayerScript : MonoBehaviour
             maintainedDist = touchOrgPos.x - playerPosition.x;
         }
 
-        // // Move player based on first touch position
+        // Move player based on first touch position
         if (Input.touchCount == 1 && Input.GetTouch(0).phase == TouchPhase.Moved && !levelInfoCanvas.activeInHierarchy)
         {
             Vector3 touchPos = Camera.main.ScreenToWorldPoint(new Vector3(Input.GetTouch(0).position.x, Input.GetTouch(0).position.y, 5));
-            playerPosition = new Vector3(touchPos.x - maintainedDist, playerPosition.y, playerPosition.z);
-
+            playerPosition = new Vector3((touchPos.x - maintainedDist) / Screen.width * 16, playerPosition.y, playerPosition.z);
 
             playerReady = true;
         }
-
+       
         if (Input.touchCount == 1 && Input.GetTouch(0).phase == TouchPhase.Began && levelInfoCanvas.activeInHierarchy)
         {
             levelInfoCanvas.SetActive(false);
@@ -301,6 +300,7 @@ public class PlayerScript : MonoBehaviour
             GameObject.Find("GameOverBackground").GetComponent<Animator>().SetBool("GameOver", true);
             gameOver = true;
 
+            GameObject.Find("GameOverText").GetComponent<Text>().text = "GAMEOVER!\nSCORE: " + playerScore;
 
             levelManager.GetComponent<AudioSource>().pitch = 0.20f;
         }
@@ -323,9 +323,10 @@ public class PlayerScript : MonoBehaviour
     public void ResetLevel()
     {            
         gameOver = false;
-
+        
         GameObject.Find("GameOverText").GetComponent<Animator>().SetBool("GameOver", false);
         GameObject.Find("GameOverBackground").GetComponent<Animator>().SetBool("GameOver", false);
+
         Time.timeScale = 1;
         levelManager.GetComponent<AudioSource>().pitch = 1;
         SceneManager.LoadScene(currentLevel);

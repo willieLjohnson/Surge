@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class ScreenShake : MonoBehaviour
 {
-    private float shakeTimer = 0.10f;
-    private float shakeAmount = 0.04f;
+    private float shakeTimer = 0; // 0.10
+    private float shakeAmount = 0.04f; // 0.04
     private bool isShaking;
     private Vector3 startPosition;
     private float currentShakeTimer;

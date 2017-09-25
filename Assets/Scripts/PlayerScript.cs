@@ -9,6 +9,8 @@ public class PlayerScript : MonoBehaviour
     // Magic variables
     private float boundary = 4.7f;
     private float playerVelocity = 0.3f;
+    private float playerSensativity = 7;
+
 
     private float levelInfoDisplayDuration = 20f;
 
@@ -18,6 +20,7 @@ public class PlayerScript : MonoBehaviour
     private float scoreMultiplier = 1f;
 
     private bool debug = false;
+
 
     // UI
     private GameObject levelInfoCanvas;
@@ -115,6 +118,7 @@ public class PlayerScript : MonoBehaviour
         // Movement on pc
         playerPosition.x += Input.GetAxis("Horizontal") * playerVelocity;
 
+
         // Get first touch position of finger
         if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began)
         {
@@ -122,11 +126,12 @@ public class PlayerScript : MonoBehaviour
             maintainedDist = touchOrgPos.x - playerPosition.x;
         }
 
+        
         // Move player based on first touch position
         if (Input.touchCount == 1 && Input.GetTouch(0).phase == TouchPhase.Moved && !levelInfoCanvas.activeInHierarchy)
         {
             Vector3 touchPos = Camera.main.ScreenToWorldPoint(new Vector3(Input.GetTouch(0).position.x, Input.GetTouch(0).position.y, 5));
-            playerPosition = new Vector3((touchPos.x - maintainedDist) / Screen.width * 16, playerPosition.y, playerPosition.z);
+            playerPosition += new Vector3(Input.GetTouch(0).deltaPosition.x / (Screen.width/2) * playerSensativity, 0, 0);
 
             playerReady = true;
         }

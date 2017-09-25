@@ -10,8 +10,6 @@ public class PlayerScript : MonoBehaviour
     private float boundary = 4.7f;
     private float playerVelocity = 0.3f;
     private float playerSensativity = 7;
-
-
     private float levelInfoDisplayDuration = 20f;
 
     private float scoreWobbleAmount = 1.4f;
@@ -36,8 +34,6 @@ public class PlayerScript : MonoBehaviour
     private int highScore;
     private int currentLevel;
     private bool playerReady = false;
-
-    private float maintainedDist;
 
     // Sound Fx
     [Header("Sound Fx")]
@@ -78,6 +74,7 @@ public class PlayerScript : MonoBehaviour
 
         numberOfBlocksTotal = (GameObject.FindGameObjectsWithTag("Block")).Length;
     }
+
     void Start()
     {
         currentLevel = SceneManager.GetActiveScene().buildIndex;
@@ -89,12 +86,10 @@ public class PlayerScript : MonoBehaviour
         playerPosition = gameObject.transform.position;
         playerReady = false;
 
-
         scoreTextOriginScale = scoreText.transform.localScale;
 
         levelManager.ChangeColor();
 
-      
         pauseMenuCanvas.SetActive(false);
     }
 
@@ -118,24 +113,14 @@ public class PlayerScript : MonoBehaviour
         // Movement on pc
         playerPosition.x += Input.GetAxis("Horizontal") * playerVelocity;
 
-
-        // Get first touch position of finger
-        if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began)
-        {
-            Vector3 touchOrgPos = Camera.main.ScreenToWorldPoint(new Vector3(Input.GetTouch(0).position.x, Input.GetTouch(0).position.y, 5));
-            maintainedDist = touchOrgPos.x - playerPosition.x;
-        }
-
-        
         // Move player based on first touch position
         if (Input.touchCount == 1 && Input.GetTouch(0).phase == TouchPhase.Moved && !levelInfoCanvas.activeInHierarchy)
         {
-            Vector3 touchPos = Camera.main.ScreenToWorldPoint(new Vector3(Input.GetTouch(0).position.x, Input.GetTouch(0).position.y, 5));
-            playerPosition += new Vector3(Input.GetTouch(0).deltaPosition.x / (Screen.width/2) * playerSensativity, 0, 0);
+            playerPosition += new Vector3(Input.GetTouch(0).deltaPosition.x / (Screen.width / 2) * playerSensativity, 0, 0);
 
             playerReady = true;
         }
-       
+
         if (Input.touchCount == 1 && Input.GetTouch(0).phase == TouchPhase.Began && levelInfoCanvas.activeInHierarchy)
         {
             levelInfoCanvas.SetActive(false);
@@ -326,9 +311,9 @@ public class PlayerScript : MonoBehaviour
     }
 
     public void ResetLevel()
-    {            
+    {
         gameOver = false;
-        
+
         GameObject.Find("GameOverText").GetComponent<Animator>().SetBool("GameOver", false);
         GameObject.Find("GameOverBackground").GetComponent<Animator>().SetBool("GameOver", false);
 

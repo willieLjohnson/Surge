@@ -290,7 +290,7 @@ public class PlayerScript : MonoBehaviour
             GameObject.Find("GameOverBackground").GetComponent<Animator>().SetBool("GameOver", true);
             gameOver = true;
 
-            GameObject.Find("GameOverText").GetComponent<Text>().text = "GAMEOVER!\nSCORE: " + playerScore;
+            GameObject.Find("GameOverText").GetComponent<Text>().text = "<size=140><b><i>GAMEOVER!</i></b></size>\n<size=75>SCORE: " + playerScore + "</size>";
 
             levelManager.GetComponent<AudioSource>().pitch = 0.20f;
         }

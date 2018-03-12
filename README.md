@@ -28,8 +28,8 @@ Created in [Unity](https://unity3d.com/).
 ### v1 - A polished product
 
 1. Cleanup codebase
-    1. [ ] Refactor code with [unity design patterns](https://github.com/Naphier/unity-design-patterns) in mind
-    2. [ ] Format folders and delete unused files
+    1. [ ] Format folders and delete unused files
+    2. [ ] Refactor code with [unity design patterns](https://github.com/Naphier/unity-design-patterns) in mind
 2. Adjust the size of objects to make playing more smooth and stable
     1. [ ] Increase player paddle size to make it easier to hit the ball
     2. [ ] Decrease block size to allow for more blocks to fit on the sreen and to give the blocks room to expand
@@ -39,3 +39,5 @@ Created in [Unity](https://unity3d.com/).
     1. [ ] Adjust the intensity of the effect to have an impact on gameplay
     2. [ ] Update song library
 5. Update levels
+6. Update UI
+7. Ship to apple store

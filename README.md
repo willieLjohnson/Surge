@@ -1,7 +1,8 @@
 # Surge
 
 ![gameplay](https://github.com/SlickJohnson/Surge/blob/master/gameplay.gif)
-An experimental game heavily inspired [Breakout](https://en.wikipedia.org/wiki/Breakout_(video_game)).
+
+An experimental game heavily inspired by [Breakout](https://en.wikipedia.org/wiki/Breakout_(video_game)).
 
 Created in [Unity](https://unity3d.com/).
 
@@ -11,7 +12,7 @@ Created in [Unity](https://unity3d.com/).
   - [Contents](#contents)
   - [Todo](#todo)
     - [v0 – An experiment](#v0-%E2%80%93-an-experiment)
-    - [v1 - A polished product](#v1---a-polished-product)
+    - [v1 – A polished product](#v1-%E2%80%93-a-polished-product)
 
 ## Todo
 
@@ -25,10 +26,10 @@ Created in [Unity](https://unity3d.com/).
 6. [x] Add gameover screen
 7. [x] Release alpha on android store
 
-### v1 - A polished product
+### v1 – A polished product
 
 1. Cleanup codebase
-    1. [ ] Format folders and delete unused files
+    1. [x] Format folders and delete unused files
     2. [ ] Refactor code with [unity design patterns](https://github.com/Naphier/unity-design-patterns) in mind
 2. Adjust the size of objects to make playing more smooth and stable
     1. [ ] Increase player paddle size to make it easier to hit the ball

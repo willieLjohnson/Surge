@@ -1,7 +1,8 @@
 # Surge
 
 ![gameplay](https://github.com/SlickJohnson/Surge/blob/master/gameplay.gif)
-An experimental game heavily inspired [Breakout](https://en.wikipedia.org/wiki/Breakout_(video_game)).
+
+An experimental game heavily inspired by [Breakout](https://en.wikipedia.org/wiki/Breakout_(video_game)).
 
 Created in [Unity](https://unity3d.com/).
 
@@ -25,7 +26,7 @@ Created in [Unity](https://unity3d.com/).
 6. [x] Add gameover screen
 7. [x] Release alpha on android store
 
-### v1 - A polished product
+### v1 – A polished product
 
 1. Cleanup codebase
     1. [ ] Refactor code with [unity design patterns](https://github.com/Naphier/unity-design-patterns) in mind

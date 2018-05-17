@@ -1,6 +1,6 @@
 # Surge
 
-![gameplay](https://github.com/SlickJohnson/Surge/blob/master/gameplay.gif)
+![gameplay](https://github.com/SlickJohnson/Surge/blob/master/docs/previews/gameplay.gif)
 
 An experimental game heavily inspired by [Breakout](https://en.wikipedia.org/wiki/Breakout_(video_game)).
 
@@ -32,7 +32,7 @@ Created in [Unity](https://unity3d.com/).
     1. [x] Format folders and delete unused files
     2. [ ] Refactor code with [unity design patterns](https://github.com/Naphier/unity-design-patterns) in mind
 2. Adjust the size of objects to make playing more smooth and stable
-    1. [ ] Increase player paddle size to make it easier to hit the ball
+    1. [] Increase player paddle size to make it easier to hit the ball
     2. [ ] Decrease block size to allow for more blocks to fit on the sreen and to give the blocks room to expand
 3. Improve touch controls for ease of use
     1. [ ] Add [TouchKit](https://github.com/prime31/TouchKit) to handle touch gestures

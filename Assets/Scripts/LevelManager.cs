@@ -37,7 +37,7 @@ public class LevelManager : MonoBehaviour
     private GameObject hud;
     private Color burstOpColor;
     private Text levelDetailsText;
-    private float intensity = 6f;
+    private float intensity = 2f;
     private float freq;
     private bool muffled;
     private float maxFreq = 22000;
@@ -65,31 +65,41 @@ public class LevelManager : MonoBehaviour
             float band6 = bandBuffer[5] / (intensity * 1f);
             float band7 = bandBuffer[6] / (intensity * 1.2f);
             float band8 = bandBuffer[7] / (intensity * 1.4f);
-
+            if (blocks1) 
             foreach (Transform block in blocks1.transform)
             {
                 block.localScale = new Vector3(1 + band1, 1 + band1, 1);
             }
+            
+            if (blocks2) 
             foreach (Transform block in blocks2.transform)
             {
                 block.localScale = new Vector3(1 + band3, 1 + band3, 1);
             }
+
+            if (blocks3) 
             foreach (Transform block in blocks3.transform)
             {
                 block.localScale = new Vector3(1 + band4, 1 + band4, 1);
             }
+
+            if (blocks4) 
             foreach (Transform block in blocks4.transform)
             {
                 block.localScale = new Vector3(1 + band5, 1 + band5, 1);
             }
 
+            if (remainingLives) 
             foreach (Transform life in remainingLives.transform)
             {
                 life.localScale = new Vector3(0.2f + band1 / (intensity * 1.35f), 0.2f + band1 / (intensity * 1.35f), 0.2f);
             }
-
+            if (player)
             player.transform.localScale = new Vector3(1 + band1 / (intensity * 1.35f), 1 + band1 / (intensity * 1.35f), 1);
-            ball.transform.parent.localScale = new Vector3(0.2f + band1 / (intensity * 5), 0.2f + band1 / (intensity * 5), 0.2f);
+
+            if (ball) {
+                ball.transform.parent.localScale = new Vector3(0.2f + band1 / (intensity * 5), 0.2f + band1 / (intensity * 5), 0.2f);
+            }
 
             if (freq < maxFreq && !muffled)
             {
@@ -118,7 +128,6 @@ public class LevelManager : MonoBehaviour
             {
                 average += samples[count] * (count + 1);
                 count++;
-
             }
             average /= count;
 
@@ -199,7 +208,7 @@ public class LevelManager : MonoBehaviour
 
         foreach (Transform life in remainingLives.transform)
         {
-            life.GetComponent<Renderer>().material.color = new Color(playerColor.r, playerColor.g, playerColor.b, .5f);
+            life.GetComponent<Renderer>().material.color = new Color(playerColor.r, playerColor.g, playerColor.b, 1f);
         }
 
         // change GetComponent<Camera>() background scolor

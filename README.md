@@ -9,10 +9,10 @@ Created in [Unity](https://unity3d.com/).
 ## Contents
 
 - [Surge](#surge)
-  - [Contents](#contents)
-  - [Todo](#todo)
-    - [v0 – An experiment](#v0-%E2%80%93-an-experiment)
-    - [v1 – A polished product](#v1-%E2%80%93-a-polished-product)
+    - [Contents](#contents)
+    - [Todo](#todo)
+        - [v0 – An experiment](#v0-%E2%80%93-an-experiment)
+        - [v1 – A polished product](#v1-%E2%80%93-a-polished-product)
 
 ## Todo
 
@@ -42,3 +42,4 @@ Created in [Unity](https://unity3d.com/).
 5. Update levels
 6. Update UI
 7. Ship to apple store
+d

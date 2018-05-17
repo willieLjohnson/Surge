@@ -10,7 +10,7 @@ public class PlayerScript : MonoBehaviour
     private float boundary = 4.7f;
     private float playerVelocity = 0.3f;
     private float playerSensativity = 7;
-    private float levelInfoDisplayDuration = 20f;
+    private float levelInfoDisplayDuration = 10f;
 
     private float scoreWobbleAmount = 1.4f;
     private float scoreWobbleDuration = 0.1f;
@@ -117,11 +117,10 @@ public class PlayerScript : MonoBehaviour
         if (Input.touchCount == 1 && Input.GetTouch(0).phase == TouchPhase.Moved && !levelInfoCanvas.activeInHierarchy)
         {
             playerPosition += new Vector3(Input.GetTouch(0).deltaPosition.x / (Screen.width / 2) * playerSensativity, 0, 0);
-
             playerReady = true;
         }
 
-        if (Input.touchCount == 1 && Input.GetTouch(0).phase == TouchPhase.Began && levelInfoCanvas.activeInHierarchy)
+        if ((Input.GetButtonDown("Jump") || (Input.touchCount == 1 && Input.GetTouch(0).phase == TouchPhase.Began) && levelInfoCanvas.activeInHierarchy))
         {
             levelInfoCanvas.SetActive(false);
             levelInfoDisplayDuration = 2;
@@ -184,7 +183,9 @@ public class PlayerScript : MonoBehaviour
     {
         if (levelInfoDisplayDuration > 0 && levelInfoCanvas.activeInHierarchy == true)
         {
-            levelInfoCanvas.GetComponent<CanvasGroup>().alpha -= .001f;
+            if (levelInfoDisplayDuration < 8) {
+                levelInfoCanvas.GetComponent<CanvasGroup>().alpha -= 0.01f;
+            }
             levelInfoDisplayDuration -= Time.deltaTime;
         }
         else

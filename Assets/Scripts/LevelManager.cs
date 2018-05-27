@@ -36,8 +36,11 @@ public class LevelManager : MonoBehaviour
 
     private GameObject hud;
     private Color burstOpColor;
-    private Text levelDetailsText;
-    private float intensity = 2f;
+    private GameObject levelDetails;
+    private Text songInfoText;
+    private Text songYoutubeLinkText;
+    private Text songDownloadLinkText;
+    public float intensity = 0.2f;
     private float freq;
     private bool muffled;
     private float maxFreq = 22000;
@@ -48,70 +51,80 @@ public class LevelManager : MonoBehaviour
     private float[] bufferDecrease = new float[8];
     public string songName;
     public static int numberOfMenuScenes =  4;
+    private AudioSource audioSource;
     
     public void Update()
     {
         if (SceneManager.GetActiveScene().buildIndex > numberOfMenuScenes - 1)
         {
-            GetComponent<AudioSource>().GetSpectrumData(samples, 0, FFTWindow.Hamming);
-            MakeFreqBands();
-            BandBuffer();
+            audioSource = GetComponent<AudioSource>();
+            audioSource.pitch = Time.timeScale;
+            if (Time.timeScale > 0)  {
+                audioSource.GetSpectrumData(samples, 0, FFTWindow.Hamming);
+                MakeFreqBands();
+                BandBuffer();
+                float band1 = bandBuffer[0] * intensity;
+                float band2 = bandBuffer[1] * intensity;
+                float band3 = bandBuffer[2] * intensity;
+                float band4 = bandBuffer[3] * intensity;
+                float band5 = bandBuffer[4] * intensity;
+                float band6 = bandBuffer[5] * intensity;
+                float band7 = bandBuffer[6] * intensity;
+                float band8 = bandBuffer[7] * intensity;
+                float blockSize = Mathf.Clamp(1.2f - (2 * intensity), 0.5f, 2f);
+                if (blocks1) 
+                foreach (Transform block in blocks1.transform)
+                {
+                    if (block.gameObject.layer != 8)
+                    {
+                        block.localScale = new Vector3(blockSize + band2, blockSize + band2, 1);
+                    }
+                }
+                
+                if (blocks2) 
+                foreach (Transform block in blocks2.transform)
+                {
+                    block.localScale = new Vector3(blockSize + band3, blockSize + band3, 1);
+                }
 
-            float band1 = bandBuffer[0] / (intensity * 1.5f);
-            float band2 = bandBuffer[1] / (intensity * 1.2f);
-            float band3 = bandBuffer[2] / (intensity * 1.4f);
-            float band4 = bandBuffer[3] / (intensity * 1.6f);
-            float band5 = bandBuffer[4] / (intensity * 1.8f);
-            float band6 = bandBuffer[5] / (intensity * 1f);
-            float band7 = bandBuffer[6] / (intensity * 1.2f);
-            float band8 = bandBuffer[7] / (intensity * 1.4f);
-            if (blocks1) 
-            foreach (Transform block in blocks1.transform)
-            {
-                block.localScale = new Vector3(1 + band1, 1 + band1, 1);
-            }
-            
-            if (blocks2) 
-            foreach (Transform block in blocks2.transform)
-            {
-                block.localScale = new Vector3(1 + band3, 1 + band3, 1);
-            }
+                if (blocks3) 
+                foreach (Transform block in blocks3.transform)
+                {
+                    block.localScale = new Vector3(blockSize + band4, blockSize + band4, 1);
+                }
 
-            if (blocks3) 
-            foreach (Transform block in blocks3.transform)
-            {
-                block.localScale = new Vector3(1 + band4, 1 + band4, 1);
-            }
+                if (blocks4) 
+                foreach (Transform block in blocks4.transform)
+                {
+                    block.localScale = new Vector3(blockSize + band5, blockSize + band5, 1);
+                }
 
-            if (blocks4) 
-            foreach (Transform block in blocks4.transform)
-            {
-                block.localScale = new Vector3(1 + band5, 1 + band5, 1);
-            }
+                var miniBand1 = band1 / 10;
+                if (remainingLives) 
+                foreach (Transform life in remainingLives.transform)
+                {
+                    life.localScale = new Vector3(0.2f + miniBand1, 0.2f + miniBand1, 1);
+                }
+                if (player)
+                player.transform.localScale = new Vector3(1 + miniBand1, 1 + miniBand1, 1);
 
-            if (remainingLives) 
-            foreach (Transform life in remainingLives.transform)
-            {
-                life.localScale = new Vector3(0.2f + band1 / (intensity * 1.35f), 0.2f + band1 / (intensity * 1.35f), 0.2f);
-            }
-            if (player)
-            player.transform.localScale = new Vector3(1 + band1 / (intensity * 1.35f), 1 + band1 / (intensity * 1.35f), 1);
+                if (ball) {
+                    ball.transform.parent.localScale = new Vector3(0.2f + miniBand1, 0.2f + miniBand1, 1);
+                }
 
-            if (ball) {
-                ball.transform.parent.localScale = new Vector3(0.2f + band1 / (intensity * 5), 0.2f + band1 / (intensity * 5), 0.2f);
-            }
+                if (freq < maxFreq && !muffled)
+                {
+                    freq += (maxFreq / 1f) * Time.deltaTime;
+                }
+                else if (freq > minFreq && muffled)
+                {
+                    freq -= (maxFreq / .5f) * Time.deltaTime;
+                }
 
-            if (freq < maxFreq && !muffled)
-            {
-                freq += (maxFreq / 1f) * Time.deltaTime;
+                freq = Mathf.Clamp(freq, minFreq, maxFreq);
+                if (Time.timeScale == 1)
+                GetComponent<AudioSource>().GetComponent<AudioLowPassFilter>().cutoffFrequency = freq;
             }
-            else if (freq > minFreq && muffled)
-            {
-                freq -= (maxFreq / .5f) * Time.deltaTime;
-            }
-
-            freq = Mathf.Clamp(freq, minFreq, maxFreq);
-            GetComponent<AudioSource>().GetComponent<AudioLowPassFilter>().cutoffFrequency = freq;
         }
     }
 
@@ -170,7 +183,7 @@ public class LevelManager : MonoBehaviour
         staticEffect = GameObject.Find("Static");
 
         hud = GameObject.Find("UI");
-        levelDetailsText = GameObject.Find("Details").GetComponent<Text>();
+        levelDetails = GameObject.Find("LevelDetails");
 
         remainingLives = GameObject.Find("Lives");
 
@@ -178,8 +191,6 @@ public class LevelManager : MonoBehaviour
         player.GetComponent<Renderer>().material.color = playerColor;
         playerOpColor = new Color(1 - playerColor.r, 1 - playerColor.g, 1 - playerColor.b, 1);
         burstOpColor = new Color(1 - burstColor.r, 1 - burstColor.g, 1 - burstColor.b, 1);
-
-        levelDetailsText.color = playerColor;
 
         ball.GetComponent<Renderer>().material.color = playerColor;
 
@@ -203,6 +214,22 @@ public class LevelManager : MonoBehaviour
             else if (hudElement.GetComponent<Image>() != null)
             {
                 hudElement.GetComponent<Image>().color = playerColor;
+            }
+        }
+
+        foreach (Transform infoElement in levelDetails.transform) 
+        {
+            if (infoElement.GetComponent<Text>() != null) 
+            {
+                infoElement.GetComponent<Text>().color = playerColor;
+            } 
+            else if (infoElement.GetComponent<Image>() != null)
+            {
+                float hue, sat, val;
+                Color.RGBToHSV(playerColor, out hue, out sat, out val);
+                var backgroundColor = Color.HSVToRGB(hue, sat, 1.1f - val);
+                backgroundColor.a = 0.95f;
+                infoElement.GetComponent<Image>().color = backgroundColor;
             }
         }
 
@@ -269,7 +296,7 @@ public class LevelManager : MonoBehaviour
     }
 
     public void StartBackgroundMusic()
-    {
+    {        
         GetComponent<AudioSource>().PlayOneShot(backgroundMusic);
     }
 

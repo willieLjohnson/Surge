@@ -90,7 +90,12 @@ public class ButtonManager : MonoBehaviour
 
     public void GoToNCSPlaylist()
     {
-        Application.OpenURL("https://www.youtube.com/playlist?list=PLGXgNrVCYDVZaXQlykaYEa_SMCcuKOCW0");
+        GotToURL("https://www.youtube.com/playlist?list=PLGXgNrVCYDVZaXQlykaYEa_SMCcuKOCW0");
+    }
+
+    public void GotToURL(string url)
+    {
+        Application.OpenURL(url);
     }
 
 }

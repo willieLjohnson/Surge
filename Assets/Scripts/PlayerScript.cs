@@ -10,7 +10,7 @@ public class PlayerScript : MonoBehaviour
     private float boundary = 4.7f;
     private float playerVelocity = 0.3f;
     private float playerSensativity = 7;
-    private float levelInfoDisplayDuration = 10f;
+    private float levelInfoDisplayDuration = 5f;
 
     private float scoreWobbleAmount = 1.4f;
     private float scoreWobbleDuration = 0.1f;
@@ -19,12 +19,12 @@ public class PlayerScript : MonoBehaviour
 
     private bool debug = false;
 
-
     // UI
     private GameObject levelInfoCanvas;
     private GameObject pauseMenuCanvas;
     private Text scoreText;
     private GameObject playerLives;
+    // Level details
     private Text levelInfoText;
     private Text scoreMultiplierText;
 
@@ -67,7 +67,7 @@ public class PlayerScript : MonoBehaviour
         pauseMenuCanvas = GameObject.Find("PauseMenu");
 
         levelInfoCanvas = GameObject.Find("LevelDetails");
-        levelInfoText = levelInfoCanvas.transform.GetChild(1).GetComponent<Text>();
+        levelInfoText = levelInfoCanvas.transform.Find("LevelInfo").GetComponent<Text>();
 
         // Visual Fx
         levelManager = GameObject.Find("LevelManager").GetComponent<LevelManager>();
@@ -80,7 +80,8 @@ public class PlayerScript : MonoBehaviour
         currentLevel = SceneManager.GetActiveScene().buildIndex;
 
         highScore = PlayerPrefs.GetInt("HighScoreLevel" + (currentLevel - LevelManager.numberOfMenuScenes + 1), 0);
-        levelInfoText.text = "Level:\n" + (currentLevel - LevelManager.numberOfMenuScenes + 1) + "\n" + "Song:\n" + levelManager.songName + "\n" + "High Score:\n" + highScore;
+        levelInfoText.text = "Level:\n" + (currentLevel - LevelManager.numberOfMenuScenes + 1) + "\n" + "High Score:\n" + highScore;
+
 
         playerScore = 0;
         playerPosition = gameObject.transform.position;
@@ -118,12 +119,7 @@ public class PlayerScript : MonoBehaviour
         {
             playerPosition += new Vector3(Input.GetTouch(0).deltaPosition.x / (Screen.width / 2) * playerSensativity, 0, 0);
             playerReady = true;
-        }
-
-        if ((Input.GetButtonDown("Jump") || (Input.touchCount == 1 && Input.GetTouch(0).phase == TouchPhase.Began) && levelInfoCanvas.activeInHierarchy))
-        {
-            levelInfoCanvas.SetActive(false);
-            levelInfoDisplayDuration = 2;
+            SetSlowMotion(false);
         }
 
         if ((Input.touchCount == 1 && Input.GetTouch(0).phase == TouchPhase.Ended && gameOver) || (Input.GetButtonDown("Jump") && gameOver))
@@ -136,16 +132,19 @@ public class PlayerScript : MonoBehaviour
             // Slow motion; Debug feature only
             if (Input.touchCount == 2 || Input.GetKeyDown(KeyCode.K))
             {
-                if (Time.timeScale == 1)
-                {
-                    Time.timeScale = .2f;
-                    Time.fixedDeltaTime = Time.timeScale * .02f;
+                ToggleSlowMotion();
+            }
+
+            if (Input.GetKeyDown(KeyCode.L))
+            {
+                if (Time.timeScale == 1) {
+                    Time.timeScale = 1.5f;
                 }
                 else
                 {
                     Time.timeScale = 1;
-                    Time.fixedDeltaTime = Time.timeScale * .02f;
                 }
+                Time.fixedDeltaTime = Time.timeScale * .02f;
             }
 
             // Switch level; Debug feature only
@@ -183,8 +182,8 @@ public class PlayerScript : MonoBehaviour
     {
         if (levelInfoDisplayDuration > 0 && levelInfoCanvas.activeInHierarchy == true)
         {
-            if (levelInfoDisplayDuration < 8) {
-                levelInfoCanvas.GetComponent<CanvasGroup>().alpha -= 0.01f;
+            if (levelInfoDisplayDuration < 2) {
+                levelInfoCanvas.GetComponent<CanvasGroup>().alpha -= 1 / 100f;
             }
             levelInfoDisplayDuration -= Time.deltaTime;
         }
@@ -293,7 +292,8 @@ public class PlayerScript : MonoBehaviour
 
             GameObject.Find("GameOverText").GetComponent<Text>().text = "<size=140><b><i>GAMEOVER!</i></b></size>\n<size=75>SCORE: " + playerScore + "</size>";
 
-            levelManager.GetComponent<AudioSource>().pitch = 0.20f;
+            // levelManager.GetComponent<AudioSource>().pitch = 0.20f;
+            SetSlowMotion(true);
         }
 
         // chech if all blocks are destroyed
@@ -326,5 +326,30 @@ public class PlayerScript : MonoBehaviour
     public bool IsPlayerReady()
     {
         return playerReady;
+    }
+
+    public void SetSlowMotion(bool on) {
+        if (on)
+        {
+            Time.timeScale = .5f;
+            Time.fixedDeltaTime = Time.timeScale * .02f;
+        }
+        else
+        {
+            Time.timeScale = 1;
+        }
+        Time.fixedDeltaTime = Time.timeScale * .02f;
+    }
+    public void ToggleSlowMotion() {
+        if (Time.timeScale == 1)
+        {
+            Time.timeScale = .5f;
+            Time.fixedDeltaTime = Time.timeScale * .02f;
+        }
+        else
+        {
+            Time.timeScale = 1;
+            Time.fixedDeltaTime = Time.timeScale * .02f;
+        }
     }
 }

@@ -217,15 +217,15 @@ public class BallScript : MonoBehaviour
             if (Time.time - lastHitTime < .5f)
             {
                 GetComponent<AudioSource>().pitch += .1f;
-
+                GetComponent<AudioSource>().volume += .1f;
                 lastHitTime = Time.time;
             }
             else
             {
                 GetComponent<AudioSource>().pitch = 1f;
+                GetComponent<AudioSource>().volume = 0.5f;
                 lastHitTime = Time.time;
             }
-
 
             float boostDirX = Math.Sign(velocity.x) != 0 ? Math.Sign(velocity.x) : 1;
             float boostDirY = Math.Sign(velocity.y) != 0 ? Math.Sign(velocity.y) : -1;

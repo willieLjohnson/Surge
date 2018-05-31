@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 6100000}
   - component: {fileID: 50584954334432972}
   - component: {fileID: 95911255585525410}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Four Block
   m_TagString: Block
   m_Icon: {fileID: 4660412927644837186, guid: 0000000000000000d000000000000000, type: 0}
@@ -91,7 +91,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4545797856896556}
   - component: {fileID: 212048628639690454}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Sprite
   m_TagString: Untagged
   m_Icon: {fileID: 0}

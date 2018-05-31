@@ -24,7 +24,7 @@ GameObject:
   - component: {fileID: 114016060957126116}
   - component: {fileID: 82049568711209326}
   - component: {fileID: 95434903841899264}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Ball
   m_TagString: Ball
   m_Icon: {fileID: 0}
@@ -41,7 +41,7 @@ GameObject:
   - component: {fileID: 4249707324072544}
   - component: {fileID: 198639280182302094}
   - component: {fileID: 199594507575598248}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Static
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -58,7 +58,7 @@ GameObject:
   - component: {fileID: 4862543135883922}
   - component: {fileID: 212558234030660412}
   - component: {fileID: 96427108954663798}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: BallSprite
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -344,6 +344,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   hitSound: {fileID: 8300000, guid: 70b118cf25ae0f0448b223c1cff10b47, type: 3}
   hitBlockSound: {fileID: 8300000, guid: 856d7feabad5a9b4ea1d4737015a46e2, type: 3}
+  maxSpeed: 20
 --- !u!198 &198639280182302094
 ParticleSystem:
   m_ObjectHideFlags: 1

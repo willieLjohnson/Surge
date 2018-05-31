@@ -21,8 +21,8 @@ public class LevelManager : MonoBehaviour
 
     public Color backgroundColor;
 
-    private GameObject player;
-    private GameObject ball;
+    private GameObject playerSprite;
+    private GameObject ballSprite;
     private GameObject borders;
 
     private GameObject blocks1;
@@ -48,6 +48,7 @@ public class LevelManager : MonoBehaviour
     private float[] samples = new float[512];
     private float[] freqBands = new float[8];
     private float[] bandBuffer = new float[8];
+    private float[] bands = new float[8];
     private float[] bufferDecrease = new float[8];
     public string songName;
     public static int numberOfMenuScenes =  4;
@@ -63,55 +64,58 @@ public class LevelManager : MonoBehaviour
                 audioSource.GetSpectrumData(samples, 0, FFTWindow.Hamming);
                 MakeFreqBands();
                 BandBuffer();
-                float band1 = bandBuffer[0] * intensity;
-                float band2 = bandBuffer[1] * intensity;
-                float band3 = bandBuffer[2] * intensity;
-                float band4 = bandBuffer[3] * intensity;
-                float band5 = bandBuffer[4] * intensity;
-                float band6 = bandBuffer[5] * intensity;
-                float band7 = bandBuffer[6] * intensity;
-                float band8 = bandBuffer[7] * intensity;
+                bands[0] = bandBuffer[0] * intensity;
+                bands[1] = bandBuffer[1] * intensity;
+                bands[2] = bandBuffer[2] * intensity;
+                bands[3] = bandBuffer[3] * intensity;
+                bands[4] = bandBuffer[4] * intensity;
+                bands[5] = bandBuffer[5] * intensity;
+                bands[6] = bandBuffer[6] * intensity;
+                bands[7] = bandBuffer[7] * intensity;
+
                 float blockSize = Mathf.Clamp(1.2f - (2 * intensity), 0.5f, 2f);
-                if (blocks1) 
+                if (blocks1)
                 foreach (Transform block in blocks1.transform)
                 {
                     if (block.gameObject.layer != 8)
                     {
-                        block.localScale = new Vector3(blockSize + band2, blockSize + band2, 1);
+                        block.localScale = new Vector3(blockSize + bands[1], blockSize + bands[1], 1);
                     }
                 }
                 
                 if (blocks2) 
                 foreach (Transform block in blocks2.transform)
                 {
-                    block.localScale = new Vector3(blockSize + band3, blockSize + band3, 1);
+                    block.localScale = new Vector3(blockSize + bands[2], blockSize + bands[2], 1);
                 }
 
                 if (blocks3) 
                 foreach (Transform block in blocks3.transform)
                 {
-                    block.localScale = new Vector3(blockSize + band4, blockSize + band4, 1);
+                    block.localScale = new Vector3(blockSize + bands[3], blockSize + bands[3], 1);
                 }
 
                 if (blocks4) 
                 foreach (Transform block in blocks4.transform)
                 {
-                    block.localScale = new Vector3(blockSize + band5, blockSize + band5, 1);
+                    block.localScale = new Vector3(blockSize + bands[4], blockSize + bands[4], 1);
                 }
 
-                var miniBand1 = band1 / 10;
+                var miniBand1 = bands[0] / 5;
                 if (remainingLives) 
                 foreach (Transform life in remainingLives.transform)
                 {
                     life.localScale = new Vector3(0.2f + miniBand1, 0.2f + miniBand1, 1);
                 }
-                if (player)
-                player.transform.localScale = new Vector3(1 + miniBand1, 1 + miniBand1, 1);
+                if (playerSprite)
+                playerSprite.transform.localScale = new Vector3(1 + miniBand1, 1 + miniBand1, 1);
 
-                if (ball) {
-                    ball.transform.parent.localScale = new Vector3(0.2f + miniBand1, 0.2f + miniBand1, 1);
+                if (ballSprite) {
+                    ballSprite.transform.parent.localScale = new Vector3(0.2f + miniBand1, 0.2f + miniBand1, 1);
+                    // ballSprite.GetComponentInParent<Rigidbody2D>().gravityScale = 1f + bands[0];
+                    // ballSprite.GetComponent<TrailRenderer>().time = 1f + bands[0];
                 }
-
+    
                 if (freq < maxFreq && !muffled)
                 {
                     freq += (maxFreq / 1f) * Time.deltaTime;
@@ -170,8 +174,8 @@ public class LevelManager : MonoBehaviour
     public void ChangeColor()
     {
         // get all gameobjects
-        player = GameObject.Find("PlayerSprite");
-        ball = GameObject.Find("BallSprite");
+        playerSprite = GameObject.Find("PlayerSprite");
+        ballSprite = GameObject.Find("BallSprite");
         borders = GameObject.Find("Borders");
 
         blocks1 = GameObject.Find("One");
@@ -188,14 +192,14 @@ public class LevelManager : MonoBehaviour
         remainingLives = GameObject.Find("Lives");
 
         // change player and ball color and particle effect
-        player.GetComponent<Renderer>().material.color = playerColor;
+        playerSprite.GetComponent<Renderer>().material.color = playerColor;
         playerOpColor = new Color(1 - playerColor.r, 1 - playerColor.g, 1 - playerColor.b, 1);
         burstOpColor = new Color(1 - burstColor.r, 1 - burstColor.g, 1 - burstColor.b, 1);
 
-        ball.GetComponent<Renderer>().material.color = playerColor;
+        ballSprite.GetComponent<Renderer>().material.color = playerColor;
 
-        ball.GetComponent<TrailRenderer>().startColor = playerColor;
-        ball.GetComponent<TrailRenderer>().endColor = new Color(playerColor.r, playerColor.g, playerColor.b, .2f);
+        ballSprite.GetComponent<TrailRenderer>().startColor = playerColor;
+        ballSprite.GetComponent<TrailRenderer>().endColor = new Color(playerColor.r, playerColor.g, playerColor.b, .2f);
 
         var burstPS = burst.GetComponent<ParticleSystem>().main;
         burstPS.startColor = new ParticleSystem.MinMaxGradient(burstColor, burstOpColor);

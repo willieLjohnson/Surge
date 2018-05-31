@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 6100000}
   - component: {fileID: 50865080508600748}
   - component: {fileID: 95858686743382844}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Three Block
   m_TagString: Block
   m_Icon: {fileID: -982381405332843317, guid: 0000000000000000d000000000000000, type: 0}
@@ -91,7 +91,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4527275038489594}
   - component: {fileID: 212413576267552860}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Sprite
   m_TagString: Untagged
   m_Icon: {fileID: 0}

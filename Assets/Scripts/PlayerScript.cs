@@ -267,7 +267,7 @@ public class PlayerScript : MonoBehaviour
 
         scoreBoostFactor = 0;
         scoreMultiplier = 1;
-
+        
         scoreMultiplierText.text = "x" + (scoreMultiplier + scoreBoostFactor).ToString();
     }
 

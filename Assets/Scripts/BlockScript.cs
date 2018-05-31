@@ -68,20 +68,20 @@ public class BlockScript : MonoBehaviour
 
                 // make block move using the velocity from the ball
                 GetComponent<Rigidbody2D>().isKinematic = false;
-                GetComponent<Rigidbody2D>().mass = .025f;
+                GetComponent<Rigidbody2D>().mass = 1f;
 
                 // Prevent collision with unrelated gameobjects
                 gameObject.layer = 8;
 
                 // Get rotation speed based on player velocity
                 Vector2 vol = collision.gameObject.GetComponent<Rigidbody2D>().velocity;
-                GetComponent<Rigidbody2D>().AddForce(new Vector2(-vol.x, -vol.y));
+                GetComponent<Rigidbody2D>().AddForce(new Vector2(-vol.x * 0.75f, -vol.y * 0.75f), ForceMode2D.Impulse);
                 rotationSpeed = vol.x;
 
                 // make the block transparent
                 Transform blockSprite = transform.GetChild(0);
                 Color col = blockSprite.GetComponent<Renderer>().material.color;
-                blockSprite.GetComponent<Renderer>().material.color = new Color(col.r, col.g, col.b, col.a - 0.5f);
+                blockSprite.GetComponent<Renderer>().material.color = new Color(col.r, col.g, col.b, col.a * 0.25f);
 
                 // slow down time for impact
 

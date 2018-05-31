@@ -18,6 +18,9 @@ public class BallScript : MonoBehaviour
     // Sound 
     public AudioClip hitSound;
     public AudioClip hitBlockSound;
+    
+    public float maxSpeed = 50f;
+    public float minSpeed = 10f;
 
     private Quaternion ballRotation;
 
@@ -74,7 +77,7 @@ public class BallScript : MonoBehaviour
     void Start()
     {
         // create the force
-        ballInitialForce = new Vector2(100.0f, 450.0f);
+        ballInitialForce = new Vector2(0, maxSpeed * 0.4f);
 
         // set to inactive
         ballIsActive = false;
@@ -97,6 +100,25 @@ public class BallScript : MonoBehaviour
 
     void Update()
     {
+        Rigidbody2D rigidBody = GetComponent<Rigidbody2D>();
+        float speed = Vector3.Magnitude (rigidBody.velocity);  // test current object speed
+            
+        if (speed > maxSpeed)
+        {
+            float brakeSpeed = speed - maxSpeed;  // calculate the speed decrease
+            Vector2 normalisedVelocity = rigidBody.velocity.normalized;
+            Vector2 brakeVelocity = normalisedVelocity * brakeSpeed;  // make the brake Vector3 value
+
+            rigidBody.AddForce(-brakeVelocity);  // apply opposing brake force
+        } 
+        else if (speed < minSpeed)
+        {
+            float acceleration = minSpeed - speed;  // calculate the speed increase
+            Vector2 normalisedVelocity = rigidBody.velocity.normalized;
+            Vector2 velocity = normalisedVelocity * acceleration;  // make the brake Vector3 value
+            rigidBody.AddForce(velocity);  // apply opposing brake force
+        }
+
         // check for user input
         if (Input.GetButtonDown("Jump") || (Input.touchCount == 1 && Input.GetTouch(0).phase == TouchPhase.Ended && Input.GetTouch(0).phase != TouchPhase.Moved && playerObject.GetComponent<PlayerScript>().IsPlayerReady()))
         {
@@ -104,20 +126,20 @@ public class BallScript : MonoBehaviour
             if (!ballIsActive)
             {
                 // reset the force
-                GetComponent<Rigidbody2D>().isKinematic = false;
+                rigidBody.isKinematic = false;
 
                 // add a force
                 // roate
                 if (transform.position.x >= 0)
                 {
-                    ballInitialForce = new Vector2(-175, 375);
+                    ballInitialForce = new Vector2(-2, maxSpeed * 0.4f);
                 }
                 else
                 {
-                    ballInitialForce = new Vector2(175, 375);
+                    ballInitialForce = new Vector2(2, maxSpeed * 0.4f);
                 }
 
-                GetComponent<Rigidbody2D>().AddForce(ballInitialForce);
+                rigidBody.AddForce(ballInitialForce, ForceMode2D.Impulse);
 
                 setVisualEffectsEnabled(true);
 
@@ -142,7 +164,7 @@ public class BallScript : MonoBehaviour
 
             // get and use the player position
             ballPosition.x = playerObject.transform.position.x;
-            ballPosition.y = playerObject.transform.position.y + .45f;
+            ballPosition.y = playerObject.transform.position.y + ballScale.y;
 
             // apply player X position to the ball
             transform.position = ballPosition;
@@ -151,7 +173,7 @@ public class BallScript : MonoBehaviour
         if (ballIsActive)
         {
             // rotate ball to the direction it moves
-            Vector2 velocity = GetComponent<Rigidbody2D>().velocity;
+            Vector2 velocity = rigidBody.velocity;
             if (velocity != Vector2.zero)
             {
                 float angle = Mathf.Atan2(velocity.y, velocity.x) * Mathf.Rad2Deg;
@@ -169,7 +191,6 @@ public class BallScript : MonoBehaviour
             {
                 ballSprite.GetComponent<Renderer>().material.color = ballColor;
                 ballSprite.GetComponent<TrailRenderer>().startColor = ballColor;
-
                 isWobbling = false;
             }
 
@@ -179,10 +200,9 @@ public class BallScript : MonoBehaviour
                 //reset ball
                 ballIsActive = false;
                 ballPosition.x = playerObject.transform.position.x;
-                ballPosition.y = playerObject.transform.position.y + .45f;
-                GetComponent<Rigidbody2D>().velocity = Vector2.zero;
+                ballPosition.y = playerObject.transform.position.y + ballScale.y;
+                rigidBody.velocity = Vector2.zero;
                 transform.localScale = ballScale;
-
                 // disable trail
                 setVisualEffectsEnabled(false);
 
@@ -190,10 +210,8 @@ public class BallScript : MonoBehaviour
                 transform.rotation = ballRotation;
                 transform.position = ballPosition;
 
-                GetComponent<Rigidbody2D>().isKinematic = true;
-
+                rigidBody.isKinematic = true;
                 playerObject.SendMessage("TakeLife");
-
                 cam.SendMessage("ShakeCamera", 7);
 
                 world.MuffleBackgroundMusic();
@@ -204,12 +222,11 @@ public class BallScript : MonoBehaviour
     void OnCollisionEnter2D(Collision2D collision)
     {
         GameObject collisionObj = collision.gameObject;
+        Rigidbody2D rigidBody = GetComponent<Rigidbody2D>();
 
         if (ballIsActive)
         {
             // particle effet
-            collisionParticle();
-
             Vector2 velocity = GetComponent<Rigidbody2D>().velocity;
 
             if (Time.time - lastHitTime > .01f) GetComponent<AudioSource>().PlayOneShot(hitSound);
@@ -230,42 +247,39 @@ public class BallScript : MonoBehaviour
             float boostDirX = Math.Sign(velocity.x) != 0 ? Math.Sign(velocity.x) : 1;
             float boostDirY = Math.Sign(velocity.y) != 0 ? Math.Sign(velocity.y) : -1;
 
-            // if (collision.gameObject == playerObject)
-            // {
-            //     float difference = (transform.position.x - playerObject.transform.position.x)*10;
-            //     int differenceDir = Math.Sign(difference);
-
-            //     Vector2 force = new Vector2(25f * difference, 0);
-
-            //     if (boostDirX != differenceDir)
-            //     {
-            //         Debug.Log("Change");
-            //         GetComponent<Rigidbody2D>().AddForce(force);
-            //     }
-            // }
+            if (collision.gameObject == playerObject)
+            {
+                float difference = (transform.position.x - playerObject.transform.position.x) * 10;
+                int differenceDir = Math.Sign(difference);
+                
+                // float velocityY = Mathf.Clamp(Math.Abs(velocity.y) * 1.1f * rigidBody.gravityScale, 15f + rigidBody.gravityScale, 20f + (rigidBody.gravityScale * 10));
+                rigidBody.AddForce(new Vector2(difference * maxSpeed, maxSpeed));
+                collisionParticle();
+            }
 
             if (Math.Abs(velocity.y) < 20f && collision.gameObject.CompareTag("Border"))
             {
-                Vector2 force = new Vector2(0, boostDirY * 37);
+                Vector2 force = new Vector2(0, boostDirY * 15);
                 GetComponent<Rigidbody2D>().AddForce(force);
                 playerObject.SendMessage("Boost", 0.1f);
+                collisionParticle();
             }
 
-            // Make sure that the ball does not get into a horizontal trap
-            if (Math.Abs(velocity.y) < 52f && collision.gameObject == playerObject)
-            {
-                Vector2 force = new Vector2(0, boostDirY * 12);
-                GetComponent<Rigidbody2D>().AddForce(force);
-                playerObject.SendMessage("Boost", 0.1f);
-            }
+            // // Make sure that the ball does not get into a horizontal trap
+            // if (Math.Abs(velocity.y) < 52f && collision.gameObject == playerObject)
+            // {
+            //     Vector2 force = new Vector2(0, boostDirY * 12);
+            //     GetComponent<Rigidbody2D>().AddForce(force);
+            //     playerObject.SendMessage("Boost", 0.1f);
+            // }
 
-            // Make sure that the ball does not get into a vertical trap
-            if (Math.Abs(velocity.x) < 20f && collision.gameObject.CompareTag("Player"))
-            {
-                Vector2 force = new Vector2(boostDirX * 37, 0);
-                GetComponent<Rigidbody2D>().AddForce(force);
-                playerObject.SendMessage("Boost", 0.1f);
-            }
+            // // Make sure that the ball does not get into a vertical trap
+            // if (Math.Abs(velocity.x) < 20f && collision.gameObject.CompareTag("Player"))
+            // {
+            //     Vector2 force = new Vector2(boostDirX * 37, 0);
+            //     GetComponent<Rigidbody2D>().AddForce(force);
+            //     playerObject.SendMessage("Boost", 0.1f);
+            // }
 
             if (collision.gameObject.CompareTag("Player")) playerAnim.Play("PeddleCollision", -1, 0);
             // Change block color
@@ -289,10 +303,9 @@ public class BallScript : MonoBehaviour
                     case "One":
                         flare = 2f;
                         playerObject.SendMessage("Boost", 1f);
+                        collisionParticle();
                         break;
                 }
-
-
             world.ShakeAllBlocks();
 
             // Wobble ball

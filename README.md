@@ -30,16 +30,15 @@ Created in [Unity](https://unity3d.com/).
 
 1. Cleanup codebase
     1. [x] Format folders and delete unused files
-    2. [ ] Refactor code with [unity design patterns](https://github.com/Naphier/unity-design-patterns) in mind
+    2. [x] Refactor code with [unity design patterns](https://github.com/Naphier/unity-design-patterns) in mind
 2. Adjust the size of objects to make playing more smooth and stable
-    1. [] Increase player paddle size to make it easier to hit the ball
-    2. [ ] Decrease block size to allow for more blocks to fit on the sreen and to give the blocks room to expand
+    1. [x] Increase player paddle size to make it easier to hit the ball
+    2. [x] Decrease block size to allow for more blocks to fit on the sreen and to give the blocks room to expand
 3. Improve touch controls for ease of use
     1. [ ] Add [TouchKit](https://github.com/prime31/TouchKit) to handle touch gestures
 4. Make the music visualization effect a core mechanic of the game
-    1. [ ] Adjust the intensity of the effect to have an impact on gameplay
-    2. [ ] Update song library
-5. Update levels
-6. Update UI
-7. Ship to apple store
-d
+    1. [x] Adjust the intensity of the effect to have an impact on gameplay
+    2. [x] Update song library
+5. [x] Update levels
+6. [x] Update UI
+7. [x] Ship to apple store
